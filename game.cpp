@@ -69,6 +69,19 @@ void Game::initialize()
 
 }
 
+void Game::finalize()
+{
+
+}
+
+
+void Game::keyboard( const std::uint8_t* keys )
+{
+//	if (keys[SDL_SCANCODE_SPACE])
+//	if (keys[SDL_SCANCODE_UP])
+}
+
+
 void Game::loop()
 {
 	Uint64 now = SDL_GetPerformanceCounter(); // timers

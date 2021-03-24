@@ -1,5 +1,7 @@
 #include "GameCore.h"
 
+
+using namespace Core;
 int main( int argc, char** argv )
 {
 
