@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "window.h"
 
 /*Default constructor
 width=200
@@ -60,4 +61,3 @@ void Window::update() const
 	// Copy the window surface to the screen
 	SDL_UpdateWindowSurface( window_ );
 }
-

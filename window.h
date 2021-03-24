@@ -1,6 +1,9 @@
 #ifndef _WINDOW_
 #define _WINDOW_
 
+#include "surface.h"
+#include <SDL.h>
+
 class Window
 {
 

@@ -90,7 +90,7 @@ ShapeO::ShapeO()
 	tiles_.resize(4);
 	tiles_[ 0 ] = { std::make_pair( 0, 0 ),
 					std::make_pair( 0, 1 ),
-					std::make_pair( 1, 0 ), 
+					std::make_pair( 1, 0 ),
 					std::make_pair( 1, 1 ) };
 	tiles_[ 1 ] = tiles_[ 0 ];
 	tiles_[ 2 ] = tiles_[ 0 ];
@@ -119,29 +119,31 @@ ShapeT::ShapeT()
 :	GraphicsObject()
 {
 	tiles_.resize( 4 );
-	tiles_[ 0 ] = { std::make_pair( -1, 0 ), 
+	tiles_[ 0 ] = { std::make_pair( -1, 0 ),
                     std::make_pair( 0, 0 ),
-                    std::make_pair( 1, 0 ), 
+                    std::make_pair( 1, 0 ),
                     std::make_pair( 0, 1 ) };
 
 	tiles_[ 1 ] = { std::make_pair( -1, 1 ),
-                    std::make_pair( 0, 0 ), 
-                    std::make_pair( 0, 1 ), 
+                    std::make_pair( 0, 0 ),
+                    std::make_pair( 0, 1 ),
                     std::make_pair( 0, 2 ) };
 
-	tiles_[ 2 ] = { std::make_pair( 0, 0 ), 
-                    std::make_pair( -1, 1 ), 
-                    std::make_pair( 0, 1 ), 
+	tiles_[ 2 ] = { std::make_pair( 0, 0 ),
+                    std::make_pair( -1, 1 ),
+                    std::make_pair( 0, 1 ),
                     std::make_pair( 1, 1 ) };
 
-	tiles_[ 3 ] = { std::make_pair( -1, 0 ), 
-                    std::make_pair( -1, 1 ), 
-                    std::make_pair( -1, 2 ), 
+	tiles_[ 3 ] = { std::make_pair( -1, 0 ),
+                    std::make_pair( -1, 1 ),
+                    std::make_pair( -1, 2 ),
                     std::make_pair( 0, 1 ) };
 }
 ShapeT::~ShapeT()
 {
 }
+
+/*
 //////////////////////////////////////////
 
 ///////////////SHAPE J////////////////////
@@ -163,3 +165,4 @@ ShapeT::~ShapeT()
 ...
 ...
 //////////////////////////////////////////
+*/

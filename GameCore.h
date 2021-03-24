@@ -1,6 +1,8 @@
 #ifndef _GAME_CORE_H_
 #define _GAME_CORE_H_
 
+#include "game.hpp"
+
 namespace Core
 {
 

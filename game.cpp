@@ -1,11 +1,13 @@
 #include <SDL.h>
+#include <string>
+#include "game.hpp"
 
 
 Game::Game()
 :	window_( nullptr )
 ,	planche_( nullptr )
 ,	sprites_()
-,	balls_()
+//,	balls_()
 ,	presenceMap_()
 ,	grid_nbRows_( 0 )
 ,	grid_nbColumns_( 0 )
@@ -21,7 +23,7 @@ Game::~Game()
 		sprite = nullptr;
 	}
 	sprites_.clear();
-	
+
 	delete planche_;
 	planche_ = nullptr;
 
@@ -34,9 +36,9 @@ void Game::initialize()
     grid_nbRows_ = 20;
 	grid_nbColumns_ = 10;
 	grid_tileSize_ = 24;
-    /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet 
+    /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet
     arrete de bouger (touche le fond), on met la matrice à cette zone à true.
-    De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui 
+    De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
     est a true, il y a collision*/
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
 
@@ -71,7 +73,7 @@ void Game::loop()
 {
 	Uint64 now = SDL_GetPerformanceCounter(); // timers
 	Uint64 prev = now;
-	
+
 	bool quit = false;
 	while ( !quit )
 	{

@@ -5,9 +5,13 @@
 #include <vector>
 #include <list>
 
-class Window;
-class Surface;
-class Sprite;
+#include "window.h"
+#include "sprite.h"
+#include "surface.h"
+
+// class Window;
+// class Surface;
+// class Sprite;
 
 
 
@@ -37,6 +41,11 @@ private:
 	std::list< std::vector< bool > > presenceMap_;
 
 	void drawMap();
+
+	//eventuellement à mettre dans un objet grid ?
+	int grid_nbRows_;
+	int grid_nbColumns_;
+	int grid_tileSize_;
 
 };
 

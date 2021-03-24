@@ -28,9 +28,10 @@ endfunction()
 
 #ADD_PRG(TARGET TP_SDL SOURCES base_tp1.cpp)
 
-ADD_PRG(TARGET tetris SOURCES tetris.cpp)
+ADD_PRG(TARGET tetris SOURCES game.cpp game.hpp GraphicsObject.cpp GraphicsObject.h window.cpp window.h
+		sprite.cpp sprite.inl sprite.h surface.cpp surface.h main.cpp GameCore.cpp GameCore.h)
 
 
 
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sprites.bmp
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tetrissprite.bmp
 #	DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
