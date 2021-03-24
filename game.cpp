@@ -7,7 +7,6 @@ Game::Game()
 :	window_( nullptr )
 ,	planche_( nullptr )
 ,	sprites_()
-//,	balls_()
 ,	presenceMap_()
 ,	grid_nbRows_( 0 )
 ,	grid_nbColumns_( 0 )
@@ -35,7 +34,7 @@ void Game::initialize()
 {
     grid_nbRows_ = 20;
 	grid_nbColumns_ = 10;
-	grid_tileSize_ = 24;
+	grid_tileSize_ = 32;
     /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet
     arrete de bouger (touche le fond), on met la matrice à cette zone à true.
     De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
@@ -43,7 +42,7 @@ void Game::initialize()
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
 
     /*Pourqoi le prof fait * 2 pour windowWidth ?*/
-    const int windowWidth = grid_nbColumns_ * grid_tileSize_ * 2;
+    const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
 	const int windowHeight = grid_nbRows_ * grid_tileSize_;
 	const std::string windowTitle = "TETRIS";
 	window_ = new Window( windowTitle, windowWidth, windowHeight );
@@ -54,24 +53,29 @@ void Game::initialize()
 	const std::string image = "./tetrissprite.bmp";
 	planche_->load( image.c_str() );
 
-    /*Carre rouge, sprites_[0]*/
-    sprites_.emplace_back( new Sprite( planche_, 0, 0, 52, 52 ) );
-    /*Carre jaune, sprites_[1]*/
-    sprites_.emplace_back( new Sprite( planche_, 53, 0, 52, 52 ) );
-    /*Carre vert, sprites_[2]*/
-    sprites_.emplace_back( new Sprite( planche_, 106, 0, 52, 52 ) );
-    /*Carre bleu, sprites_[3]*/
-    sprites_.emplace_back( new Sprite( planche_, 159, 0, 52, 52 ) );
-    /*Carre violet, sprites_[4]*/
-    sprites_.emplace_back( new Sprite( planche_, 212, 0, 52, 52 ) );
-    /*Carre orange, sprites_[5]*/
-    sprites_.emplace_back( new Sprite( planche_, 265, 0, 52, 52 ) );
+	for (int i = 0 ; i < 7 ; i++)
+	{
+		sprites_.emplace_back( new Sprite( planche_, i*33, 0, 32, 32 ) );
+	}
 
-	//image de fond
-	Surface* gris_surf = new Surface();
-	const std::string gris_im = "./gris.bmp";
-	gris_surf->load( gris_im.c_str() );
-	sprites_.emplace_back( new Sprite( gris_surf, 0, 0, 52, 52 ) );
+    // /*Carre rouge, sprites_[0]*/
+    // sprites_.emplace_back( new Sprite( planche_, 0, 0, 52, 52 ) );
+    // /*Carre jaune, sprites_[1]*/
+    // sprites_.emplace_back( new Sprite( planche_, 53, 0, 52, 52 ) );
+    // /*Carre vert, sprites_[2]*/
+    // sprites_.emplace_back( new Sprite( planche_, 106, 0, 52, 52 ) );
+    // /*Carre bleu, sprites_[3]*/
+    // sprites_.emplace_back( new Sprite( planche_, 159, 0, 52, 52 ) );
+    // /*Carre violet, sprites_[4]*/
+    // sprites_.emplace_back( new Sprite( planche_, 212, 0, 52, 52 ) );
+    // /*Carre orange, sprites_[5]*/
+    // sprites_.emplace_back( new Sprite( planche_, 265, 0, 52, 52 ) );
+	//
+	// //image de fond
+	// Surface* gris_surf = new Surface();
+	// const std::string gris_im = "./gris.bmp";
+	// gris_surf->load( gris_im.c_str() );
+	// sprites_.emplace_back( new Sprite( gris_surf, 0, 0, 52, 52 ) );
 
 }
 
@@ -134,19 +138,16 @@ void Game::draw( double dt )
 {
 	// background
 
-	// creation de la surface à afficher
-
 	//affichage
-	window_->draw(*sprites_[6], 0,0);
 
 	Sprite* sfond = sprites_[ 0 ];
-	    for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
-	    {
-	        for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
-	        {
-	            window_->draw( *sfond, i, j );
-	        }
-	    }
+    for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
+    {
+        for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
+        {
+            window_->draw( *sfond, i, j );
+        }
+    }
 
 
 

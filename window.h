@@ -22,6 +22,11 @@ public:
 
 	void update() const;
 
+    SDL_Surface * get_surface() {
+    	return surface_->get_surface();
+    }
+
+
 protected:
     SDL_Window* window_;
 
