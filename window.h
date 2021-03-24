@@ -39,4 +39,5 @@ private:
 
 };
 
+#include "window.inl"
 #endif

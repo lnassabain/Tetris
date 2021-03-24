@@ -139,14 +139,14 @@ void Game::draw( double dt )
 	//affichage
 	window_->draw(*sprites_[6], 0,0);
 
-	// Sprite* sfond = sprites_[ 0 ];
-	//     for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
-	//     {
-	//         for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
-	//         {
-	//             window_->draw( *sfond, i, j );
-	//         }
-	//     }
+	Sprite* sfond = sprites_[ 0 ];
+	    for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
+	    {
+	        for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
+	        {
+	            window_->draw( *sfond, i, j );
+	        }
+	    }
 
 
 
