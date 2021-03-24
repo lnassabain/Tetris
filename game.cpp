@@ -50,32 +50,23 @@ void Game::initialize()
 
 
     planche_ = new Surface();
-	const std::string image = "./tetrissprite.bmp";
+	const std::string image = "./tetris_sprites.bmp";
 	planche_->load( image.c_str() );
 
+
+	/*
+	Carre gris, sprites_[0]
+	Carre rouge, sprites_[1]
+	Carre jaune, sprites_[2]
+	Carre vert, sprites_[3]
+	Carre bleu, sprites_[4]
+	Carre violet, sprites_[5]
+	Carre orange, sprites_[6]
+	*/
 	for (int i = 0 ; i < 7 ; i++)
 	{
 		sprites_.emplace_back( new Sprite( planche_, i*33, 0, 32, 32 ) );
 	}
-
-    // /*Carre rouge, sprites_[0]*/
-    // sprites_.emplace_back( new Sprite( planche_, 0, 0, 52, 52 ) );
-    // /*Carre jaune, sprites_[1]*/
-    // sprites_.emplace_back( new Sprite( planche_, 53, 0, 52, 52 ) );
-    // /*Carre vert, sprites_[2]*/
-    // sprites_.emplace_back( new Sprite( planche_, 106, 0, 52, 52 ) );
-    // /*Carre bleu, sprites_[3]*/
-    // sprites_.emplace_back( new Sprite( planche_, 159, 0, 52, 52 ) );
-    // /*Carre violet, sprites_[4]*/
-    // sprites_.emplace_back( new Sprite( planche_, 212, 0, 52, 52 ) );
-    // /*Carre orange, sprites_[5]*/
-    // sprites_.emplace_back( new Sprite( planche_, 265, 0, 52, 52 ) );
-	//
-	// //image de fond
-	// Surface* gris_surf = new Surface();
-	// const std::string gris_im = "./gris.bmp";
-	// gris_surf->load( gris_im.c_str() );
-	// sprites_.emplace_back( new Sprite( gris_surf, 0, 0, 52, 52 ) );
 
 }
 
