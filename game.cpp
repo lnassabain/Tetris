@@ -137,7 +137,7 @@ void Game::draw( double dt )
 	// creation de la surface à afficher
 
 	//affichage
-	window_->draw(sprites_[6], 0,0);
+	window_->draw(*sprites_[6], 0,0);
 
 	// Sprite* sfond = sprites_[ 0 ];
 	//     for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )

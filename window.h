@@ -39,5 +39,4 @@ private:
 
 };
 
-#include "sprite.inl"
 #endif
