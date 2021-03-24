@@ -67,6 +67,12 @@ void Game::initialize()
     /*Carre orange, sprites_[5]*/
     sprites_.emplace_back( new Sprite( planche_, 265, 0, 52, 52 ) );
 
+	//image de fond
+	Surface* gris_surf = new Surface();
+	const std::string gris_im = "./gris.bmp";
+	gris_surf->load( gris_im.c_str() );
+	sprites_.emplace_back( new Sprite( gris_surf, 0, 0, 52, 52 ) );
+
 }
 
 void Game::finalize()
@@ -126,4 +132,22 @@ void Game::loop()
 
 void Game::draw( double dt )
 {
+	// background
+
+	// creation de la surface à afficher
+
+	//affichage
+	window_->draw(sprites_[6], 0,0);
+
+	// Sprite* sfond = sprites_[ 0 ];
+	//     for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
+	//     {
+	//         for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
+	//         {
+	//             window_->draw( *sfond, i, j );
+	//         }
+	//     }
+
+
+
 }

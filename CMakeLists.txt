@@ -29,7 +29,7 @@ endfunction()
 #ADD_PRG(TARGET TP_SDL SOURCES base_tp1.cpp)
 
 ADD_PRG(TARGET tetris SOURCES game.cpp game.hpp GraphicsObject.cpp GraphicsObject.h window.cpp window.h
-		sprite.cpp sprite.inl sprite.h surface.cpp surface.h main.cpp GameCore.cpp GameCore.h)
+		sprite.cpp sprite.inl sprite.h surface.cpp surface.h GameCore.cpp GameCore.h main.cpp)
 
 
 
