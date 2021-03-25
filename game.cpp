@@ -2,6 +2,23 @@
 #include <string>
 #include "game.hpp"
 
+#define S_GRIS 0
+#define S_ROUGE 1
+#define S_JAUNE 2
+#define S_VERT 3
+#define S_BLEU 4
+#define S_VIOLET 5
+#define S_ORANGE 6
+
+/*Carre gris, sprites_[0]
+Carre rouge, sprites_[1]
+Carre jaune, sprites_[2]
+Carre vert, sprites_[3]
+Carre bleu, sprites_[4]
+Carre violet, sprites_[5]
+Carre orange, sprites_[6]*/
+
+
 
 Game::Game()
 :	window_( nullptr )
@@ -41,7 +58,6 @@ void Game::initialize()
     est a true, il y a collision*/
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
 
-    /*Pourqoi le prof fait * 2 pour windowWidth ?*/
     const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
 	const int windowHeight = grid_nbRows_ * grid_tileSize_;
 	const std::string windowTitle = "TETRIS";
@@ -65,7 +81,7 @@ void Game::initialize()
 	*/
 	for (int i = 0 ; i < 7 ; i++)
 	{
-		sprites_.emplace_back( new Sprite( planche_, i*33, 0, 32, 32 ) );
+		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_+1), 0, grid_tileSize_, grid_tileSize_ ) );
 	}
 
 }
@@ -128,10 +144,7 @@ void Game::loop()
 void Game::draw( double dt )
 {
 	// background
-
-	//affichage
-
-	Sprite* sfond = sprites_[ 0 ];
+	Sprite* sfond = sprites_[ S_GRIS ];
     for ( int j = 0, h = window_->height(); j <= h; j += sfond->height() )
     {
         for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )
