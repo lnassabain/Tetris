@@ -4,7 +4,7 @@
 using namespace Graphics;
 
 // Constructor
-GraphicsObject::GraphicsObject():	x( 0 ),	y( 0 ), c( c_gris )
+GraphicsObject::GraphicsObject():	x( 0 ),	y( 0 ), c( c_gris ), rotation( 0 )
 {
 }
 
@@ -14,15 +14,21 @@ GraphicsObject::~GraphicsObject()
 }
 
 // Position
-int GraphicsObject::getPositionX() const
+const int GraphicsObject::getPositionX() const
 {
 	return x;
 }
 
-int GraphicsObject::getPositionY() const
+const int GraphicsObject::getPositionY() const
 {
 	return y;
 }
+
+const int GraphicsObject::getRotation() const
+{
+	return rotation;
+}
+
 
 void GraphicsObject::setPositionX( int pValue )
 {
@@ -37,6 +43,19 @@ void GraphicsObject::setPositionY( int pValue )
 const Color GraphicsObject::getColor() const {
 	return c;
 }
+
+
+void GraphicsObject::move(int newX, int newY)
+{
+	setPositionX(newX);
+	setPositionY(newY);
+}
+
+void GraphicsObject::rotate()
+{
+	rotation = rotation + 1 % 4;
+}
+
 
 ///////////////SHAPE I////////////////////
 

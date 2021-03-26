@@ -136,7 +136,7 @@ void Game::draw( double dt )
         }
     }
 
-	{
+	{	// on affiche les 4 rotations d'une piece
         static Graphics::ShapeL* shape_test;
         static bool is_shape_initialized = false;
         if ( ! is_shape_initialized )
@@ -148,12 +148,12 @@ void Game::draw( double dt )
 
 		for (size_t i = 0 ; i < 4 ; i++)
 		{
-			int rotationID = i; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
+			//int rotationID = i; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
 			//On pourrait mettre rotationID = rot % 4;
 			//rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
 			//on incremente rot :)
-			const Graphics::TShape shapeTiles = shape_test->tiles_[ rotationID ]/*current rotation ID*/;
-			for ( const auto& p : shapeTiles )
+			const Graphics::TShape shapeTiles = shape_test->tiles_[ shape_test->getRotation()+i ]/*current rotation ID*/;
+			for ( const auto& p : shapeTiles ) //tous les carrés
 			{
 				const int x = shape_test->getPositionX();
 				const int y = shape_test->getPositionY();
@@ -162,10 +162,12 @@ void Game::draw( double dt )
 				const int colorID = shape_test->getColor();
 				Sprite* carre_rouge = sprites_[ colorID ];
 
-				/*int rotation_;
-				int nextRotation() { rotation_ = rotation_ % 4 }*/
 
 				window_->draw( *carre_rouge, (x + p.first) * grid_tileSize_, (y + p.second +i*4)%20 * grid_tileSize_ );
+
+				// shape_test->move(grid_tileSize_*4, grid_tileSize_*4);
+				// std::cout << shape_test->getPositionX() << std::endl;
+
 			}
 		}
     }

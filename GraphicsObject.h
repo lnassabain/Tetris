@@ -23,20 +23,25 @@ public:
 	virtual ~GraphicsObject();
 
 	// Position
-	int getPositionX() const;
-	int getPositionY() const;
-	void setPositionX( int pValue );
-	void setPositionY( int pValue );
+	const int getPositionX() const;
+	const int getPositionY() const;
+
+	const int getRotation() const;
 
 	TRotatedShapes tiles_;
 
 	const Color getColor() const;
+
+	void move(int newX, int newY);
+	void rotate();
 
 protected:
 
 	// Constructor
 	GraphicsObject();
 	Color c;
+	void setPositionX( int pValue );
+	void setPositionY( int pValue );
 
 
 private:
@@ -44,6 +49,7 @@ private:
     // Position
 	int x;
 	int y;
+	int rotation;
 
 
 };
