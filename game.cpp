@@ -69,16 +69,6 @@ void Game::initialize()
 	const std::string image = "./tetris_sprites.bmp";
 	planche_->load( image.c_str() );
 
-
-	/*
-	Carre gris, sprites_[0]
-	Carre rouge, sprites_[1]
-	Carre jaune, sprites_[2]
-	Carre vert, sprites_[3]
-	Carre bleu, sprites_[4]
-	Carre violet, sprites_[5]
-	Carre orange, sprites_[6]
-	*/
 	for (int i = 0 ; i < 7 ; i++)
 	{
 		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_+1), 0, grid_tileSize_, grid_tileSize_ ) );
