@@ -35,15 +35,7 @@ void GraphicsObject::setPositionY( int pValue )
 }
 
 ///////////////SHAPE I////////////////////
-class ShapeI : public GraphicsObject
-{
-public:
-	static ShapeI* create();
-	virtual ~ShapeI();
-protected:
-	ShapeI();
-private:
-};
+
 
 ShapeI* ShapeI::create()
 {
@@ -71,15 +63,6 @@ ShapeI::~ShapeI()
 //////////////////////////////////////////
 
 ///////////////SHAPE O////////////////////
-class ShapeO : public GraphicsObject
-{
-public:
-	static ShapeO* create();
-	virtual ~ShapeO();
-protected:
-	ShapeO();
-private:
-};
 ShapeO* ShapeO::create()
 {
 	return new ShapeO();
@@ -102,15 +85,6 @@ ShapeO::~ShapeO()
 //////////////////////////////////////////
 
 ///////////////SHAPE T////////////////////
-class ShapeT : public GraphicsObject
-{
-public:
-	static ShapeT* create();
-	virtual ~ShapeT();
-protected:
-	ShapeT();
-private:
-};
 ShapeT* ShapeT::create()
 {
 	return new ShapeT();

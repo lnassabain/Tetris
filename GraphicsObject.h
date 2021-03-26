@@ -6,6 +6,10 @@
 
 namespace Graphics
 {
+	using TCoordinate = std::pair< int, int >;
+	using TShape = std::vector< TCoordinate >;
+	using TRotatedShapes = std::vector< TShape >;
+
 
 class GraphicsObject
 {
@@ -21,9 +25,6 @@ public:
 	void setPositionX( int pValue );
 	void setPositionY( int pValue );
 
-	using TCoordinate = std::pair< int, int >;
-	using TShape = std::vector< TCoordinate >;
-	using TRotatedShapes = std::vector< TShape >;
 	TRotatedShapes tiles_;
 
 protected:
@@ -38,6 +39,37 @@ private:
 	int y;
 
 };
+
+class ShapeI : public GraphicsObject
+{
+public:
+	static ShapeI* create();
+	virtual ~ShapeI();
+protected:
+	ShapeI();
+private:
+};
+
+class ShapeO : public GraphicsObject
+{
+public:
+	static ShapeO* create();
+	virtual ~ShapeO();
+protected:
+	ShapeO();
+private:
+};
+
+class ShapeT : public GraphicsObject
+{
+public:
+	static ShapeT* create();
+	virtual ~ShapeT();
+protected:
+	ShapeT();
+private:
+};
+
 
 }
 

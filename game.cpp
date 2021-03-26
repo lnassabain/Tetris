@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <string>
+#include <iostream>
 #include "game.hpp"
+#include "GraphicsObject.h"
 
 #define S_GRIS 0
 #define S_ROUGE 1
@@ -143,6 +145,36 @@ void Game::draw( double dt )
         }
     }
 
+	{
+        static Graphics::ShapeO* shape_test;
+        static bool is_shape_initialized = false;
+        if ( ! is_shape_initialized )
+        {
+            shape_test = Graphics::ShapeO::create();
 
+            is_shape_initialized = true;
+        }
+        int rotationID = 0; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
+        //On pourrait mettre rotationID = rot % 4;
+        //rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
+        //on incremente rot :)
+        const Graphics::TShape shapeTiles = shape_test->tiles_[ rotationID ]/*current rotation ID*/;
+        for ( const auto& p : shapeTiles )
+        {
+            const int x = shape_test->getPositionX();
+            const int y = shape_test->getPositionY();
+
+
+            //const int colorID = shape_test->getColorID();
+            //Fct à rajouter dans GraphicsObject
+            const int colorID = 1;
+            Sprite* carre_rouge = sprites_[ colorID ];
+
+            /*int rotation_;
+            int nextRotation() { rotation_ = rotation_ % 4 }*/
+
+            window_->draw( *carre_rouge, x + p.first * grid_tileSize_, y + p.second * grid_tileSize_ );
+        }
+    }
 
 }
