@@ -12,15 +12,6 @@
 #define S_VIOLET 5
 #define S_ORANGE 6
 
-/*Carre gris, sprites_[0]
-Carre rouge, sprites_[1]
-Carre jaune, sprites_[2]
-Carre vert, sprites_[3]
-Carre bleu, sprites_[4]
-Carre violet, sprites_[5]
-Carre orange, sprites_[6]*/
-
-
 
 Game::Game()
 :	window_( nullptr )
@@ -73,7 +64,7 @@ void Game::initialize()
 
 	for (int i = 0 ; i < 7 ; i++)
 	{
-		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_+1), 0, grid_tileSize_, grid_tileSize_ ) );
+		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_), 0, grid_tileSize_, grid_tileSize_ ) );
 	}
 
 }
@@ -146,35 +137,37 @@ void Game::draw( double dt )
     }
 
 	{
-        static Graphics::ShapeO* shape_test;
+        static Graphics::ShapeL* shape_test;
         static bool is_shape_initialized = false;
         if ( ! is_shape_initialized )
         {
-            shape_test = Graphics::ShapeO::create();
+            shape_test = Graphics::ShapeL::create();
 
             is_shape_initialized = true;
         }
-        int rotationID = 0; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
-        //On pourrait mettre rotationID = rot % 4;
-        //rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
-        //on incremente rot :)
-        const Graphics::TShape shapeTiles = shape_test->tiles_[ rotationID ]/*current rotation ID*/;
-        for ( const auto& p : shapeTiles )
-        {
-            const int x = shape_test->getPositionX();
-            const int y = shape_test->getPositionY();
+
+		for (size_t i = 0 ; i < 4 ; i++)
+		{
+			int rotationID = i; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
+			//On pourrait mettre rotationID = rot % 4;
+			//rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
+			//on incremente rot :)
+			const Graphics::TShape shapeTiles = shape_test->tiles_[ rotationID ]/*current rotation ID*/;
+			for ( const auto& p : shapeTiles )
+			{
+				const int x = shape_test->getPositionX();
+				const int y = shape_test->getPositionY();
 
 
-            //const int colorID = shape_test->getColorID();
-            //Fct à rajouter dans GraphicsObject
-            const int colorID = 1;
-            Sprite* carre_rouge = sprites_[ colorID ];
+				const int colorID = shape_test->getColor();
+				Sprite* carre_rouge = sprites_[ colorID ];
 
-            /*int rotation_;
-            int nextRotation() { rotation_ = rotation_ % 4 }*/
+				/*int rotation_;
+				int nextRotation() { rotation_ = rotation_ % 4 }*/
 
-            window_->draw( *carre_rouge, x + p.first * grid_tileSize_, y + p.second * grid_tileSize_ );
-        }
+				window_->draw( *carre_rouge, (x + p.first) * grid_tileSize_, (y + p.second +i*4)%20 * grid_tileSize_ );
+			}
+		}
     }
 
 }

@@ -4,6 +4,9 @@
 #include <vector>
 #include <utility>
 
+
+enum Color : char {c_gris, c_rouge, c_jaune, c_vert, c_bleu, c_violet, c_orange};
+
 namespace Graphics
 {
 	using TCoordinate = std::pair< int, int >;
@@ -27,16 +30,21 @@ public:
 
 	TRotatedShapes tiles_;
 
+	const Color getColor() const;
+
 protected:
 
 	// Constructor
 	GraphicsObject();
+	Color c;
+
 
 private:
 
     // Position
 	int x;
 	int y;
+
 
 };
 
@@ -69,6 +77,50 @@ protected:
 	ShapeT();
 private:
 };
+
+class ShapeJ : public GraphicsObject
+{
+public:
+	static ShapeJ* create();
+	virtual ~ShapeJ();
+protected:
+	ShapeJ();
+private:
+};
+
+
+class ShapeL : public GraphicsObject
+{
+public:
+	static ShapeL* create();
+	virtual ~ShapeL();
+protected:
+	ShapeL();
+private:
+};
+
+
+class ShapeS : public GraphicsObject
+{
+public:
+	static ShapeS* create();
+	virtual ~ShapeS();
+protected:
+	ShapeS();
+private:
+};
+
+
+class ShapeZ : public GraphicsObject
+{
+public:
+	static ShapeZ* create();
+	virtual ~ShapeZ();
+protected:
+	ShapeZ();
+private:
+};
+
 
 
 }
