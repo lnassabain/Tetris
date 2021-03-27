@@ -153,7 +153,8 @@ void Game::draw( double dt )
 			//On pourrait mettre rotationID = rot % 4;
 			//rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
 			//on incremente rot :)
-			const Graphics::TShape shapeTiles = shape_test->tiles_[ shape_test->getRotation()+i ]/*current rotation ID*/;
+
+			const Graphics::TShape shapeTiles = shape_test->tiles_[ shape_test->getRotation() ]; //current rotation ID;
 			for ( const auto& p : shapeTiles ) //tous les carrés
 			{
 				const int x = shape_test->getPositionX();
@@ -164,12 +165,12 @@ void Game::draw( double dt )
 				Sprite* carre_rouge = sprites_[ colorID ];
 
 
-				window_->draw( *carre_rouge, (x + p.first) * grid_tileSize_, (y + p.second +i*4)%20 * grid_tileSize_ );
-
-				// shape_test->move(grid_tileSize_*4, grid_tileSize_*4);
-				// std::cout << shape_test->getPositionX() << std::endl;
-
+				window_->draw( *carre_rouge, x + p.first * grid_tileSize_, y + (p.second +i*4)%20 * grid_tileSize_ );
 			}
+
+			shape_test->rotate();
+			// shape_test->move(grid_tileSize_*4, grid_tileSize_*4);
+			// std::cout << shape_test->getPositionX() << std::endl;
 		}
     }
 

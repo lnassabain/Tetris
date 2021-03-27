@@ -55,6 +55,22 @@ void Window::draw( const Sprite& sprite, int x, int y )
 	surface_->draw( sprite, x, y );
 }
 
+
+// void draw(GraphicsObject::GraphicsObject * piece)
+// {
+// 	for ( const auto& carre : piece->tiles_[piece->getRotation()] )
+// 	{
+// 		const int x = piece->getPositionX();
+// 		const int y = piece->getPositionY();
+//
+// 		const int colorID = piece->getColor();
+// 		Sprite* carre_s = sprites_[ colorID ];
+//
+// 		surface_->draw( *carre_s, x + carre.first * grid_tileSize_, y + carre.second * grid_tileSize_ );
+// 	}
+// }
+
+
 /*Mise a jour de la fenetre*/
 void Window::update() const
 {

@@ -2,6 +2,7 @@
 #define _WINDOW_
 
 #include "surface.h"
+//#include "GraphicsObject.h"
 #include <SDL.h>
 
 class Window
@@ -19,6 +20,7 @@ public:
 	void finalize();
 
 	void draw( const Sprite& sprite, int x, int y );
+    //void draw(Graphics::GraphicsObject::GraphicsObject * piece);
 
 	void update() const;
 
