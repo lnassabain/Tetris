@@ -53,7 +53,7 @@ void GraphicsObject::move(int newX, int newY)
 
 void GraphicsObject::rotate()
 {
-	rotation = rotation + 1 % 4;
+	rotation = (rotation + 1) % 4;
 }
 
 

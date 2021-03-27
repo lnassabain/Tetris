@@ -11,6 +11,7 @@
 #define S_BLEU 4
 #define S_VIOLET 5
 #define S_ORANGE 6
+#define S_CYAN 7
 
 
 Game::Game()
@@ -62,7 +63,7 @@ void Game::initialize()
 	const std::string image = "./tetris_sprites.bmp";
 	planche_->load( image.c_str() );
 
-	for (int i = 0 ; i < 7 ; i++)
+	for (int i = 0 ; i < 8 ; i++)
 	{
 		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_), 0, grid_tileSize_, grid_tileSize_ ) );
 	}

@@ -5,7 +5,7 @@
 #include <utility>
 
 
-enum Color : char {c_gris, c_rouge, c_jaune, c_vert, c_bleu, c_violet, c_orange};
+enum Color : char {c_gris, c_rouge, c_jaune, c_vert, c_bleu, c_violet, c_orange, c_cyan};
 
 namespace Graphics
 {
