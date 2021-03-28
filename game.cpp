@@ -82,6 +82,38 @@ void Game::keyboard( const std::uint8_t* keys )
 //	if (keys[SDL_SCANCODE_UP])
 }
 
+Graphics::GraphicsObject* Game::shapeRand(){
+	int s = rand() % 7; //va de 0 à 6
+	Graphics::GraphicsObject* obj;
+	switch(s){
+		case 0:	
+			obj = Graphics::ShapeI::create();
+			break;
+		case 1:
+			obj = Graphics::ShapeO::create();
+			break;
+		case 2:
+			obj = Graphics::ShapeT::create();
+			break;
+		case 3:
+			obj = Graphics::ShapeJ::create();
+			break;
+		case 4:
+			obj = Graphics::ShapeL::create();
+			break;
+		case 5:
+			obj = Graphics::ShapeS::create();
+			break;
+		case 6:
+			obj = Graphics::ShapeZ::create();
+			break;
+		default:
+			std::cout << "Numero non valide" << std::endl;
+			break;
+	}
+	return obj;
+}
+
 
 void Game::loop()
 {

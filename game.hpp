@@ -8,6 +8,7 @@
 #include "window.h"
 #include "sprite.h"
 #include "surface.h"
+#include "GraphicsObject.h"
 
 // class Window;
 // class Surface;
@@ -24,6 +25,7 @@ public:
 	void initialize();
 	void finalize();
     void loop();
+	Graphics::GraphicsObject* shapeRand();
 
 protected:
 	/*Graphics window*/
