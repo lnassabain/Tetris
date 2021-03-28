@@ -22,6 +22,7 @@ Game::Game()
 ,	grid_nbRows_( 0 )
 ,	grid_nbColumns_( 0 )
 ,	grid_tileSize_( 0 )
+,	current_obj( nullptr )
 {
 }
 
@@ -75,11 +76,36 @@ void Game::finalize()
 
 }
 
+Graphics::GraphicsObject* Game::getCurrObj(){
+	return current_obj;
+}
+
+void Game::setCurrObj(Graphics::GraphicsObject* obj){
+	current_obj = obj;
+}
 
 void Game::keyboard( const std::uint8_t* keys )
 {
-//	if (keys[SDL_SCANCODE_SPACE])
-//	if (keys[SDL_SCANCODE_UP])
+	Graphics::GraphicsObject* co;
+	co = getCurrObj();
+	int x = co->getPositionX();
+	int y = co->getPositionY();
+	if (keys[SDL_SCANCODE_UP]){
+		co -> rotate();
+	}
+	if (keys[SDL_SCANCODE_LEFT]){
+		co -> setPositionX(x-grid_tileSize_);
+	}
+	if (keys[SDL_SCANCODE_RIGHT]){
+		co -> setPositionX(x+grid_tileSize_);
+	}
+	if (keys[SDL_SCANCODE_DOWN]){
+		co -> setPositionY(y+grid_tileSize_);
+	}
+	if (keys[SDL_SCANCODE_SPACE]){
+		//l'objet tombe et touche le fond
+	}
+	return;
 }
 
 Graphics::GraphicsObject* Game::shapeRand(){
@@ -109,6 +135,7 @@ Graphics::GraphicsObject* Game::shapeRand(){
 			break;
 		default:
 			std::cout << "Numero non valide" << std::endl;
+			exit(1);
 			break;
 	}
 	return obj;
@@ -134,7 +161,11 @@ void Game::loop()
 				break;
 			}
 		}
-
+		//On cree l'objet courant
+		Graphics::GraphicsObject* co;
+		co = shapeRand();
+		setCurrObj(co);
+		
 		// Keyboard management
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		keyboard( state );

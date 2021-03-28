@@ -25,6 +25,8 @@ public:
 	// Position
 	const int getPositionX() const;
 	const int getPositionY() const;
+	void setPositionX( int pValue );
+	void setPositionY( int pValue );
 
 	const int getRotation() const;
 
@@ -40,8 +42,6 @@ protected:
 	// Constructor
 	GraphicsObject();
 	Color c;
-	void setPositionX( int pValue );
-	void setPositionY( int pValue );
 
 
 private:

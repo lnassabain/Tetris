@@ -25,7 +25,9 @@ public:
 	void initialize();
 	void finalize();
     void loop();
-	Graphics::GraphicsObject* shapeRand();
+	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
+	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant
+	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
 
 protected:
 	/*Graphics window*/
@@ -48,6 +50,7 @@ private:
 	int grid_nbRows_;
 	int grid_nbColumns_;
 	int grid_tileSize_;
+	Graphics::GraphicsObject* current_obj;
 
 };
 
