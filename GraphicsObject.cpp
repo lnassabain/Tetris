@@ -80,7 +80,7 @@ ShapeI::ShapeI()
 	tiles_[ 2 ] = tiles_[ 0 ];
 	tiles_[ 3 ] = tiles_[ 1 ];
 
-	c = c_bleu;
+	c = c_cyan;
 }
 ShapeI::~ShapeI()
 {

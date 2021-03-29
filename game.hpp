@@ -25,15 +25,18 @@ public:
 	void initialize();
 	void finalize();
     void loop();
+
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
 	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant
 	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
+	int eraseLine();
 
 protected:
 	/*Graphics window*/
 	Window* window_;
 
 	void draw( double dt );
+	void drawShape(Graphics::GraphicsObject* obj); //a voir si ce serait pas drawCurrentObject
 
     /*Keyboard management*/
 	void keyboard( const std::uint8_t* keys );

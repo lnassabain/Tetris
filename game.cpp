@@ -52,6 +52,7 @@ void Game::initialize()
     De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
     est a true, il y a collision*/
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
+	presenceMap_.push_back( std::vector< bool >( grid_nbColumns_, true ) ); //le sol
 
     const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
 	const int windowHeight = grid_nbRows_ * grid_tileSize_;
@@ -112,7 +113,7 @@ Graphics::GraphicsObject* Game::shapeRand(){
 	int s = rand() % 7; //va de 0 à 6
 	Graphics::GraphicsObject* obj;
 	switch(s){
-		case 0:	
+		case 0:
 			obj = Graphics::ShapeI::create();
 			break;
 		case 1:
@@ -134,12 +135,35 @@ Graphics::GraphicsObject* Game::shapeRand(){
 			obj = Graphics::ShapeZ::create();
 			break;
 		default:
-			std::cout << "Numero non valide" << std::endl;
+			std::cerr << "Numero non valide" << std::endl;
 			exit(1);
 			break;
 	}
 	return obj;
 }
+
+/**
+ * Check if there are lines to remove and do it.
+ * @return number of erased lines
+ */
+int Game::eraseLine() //pour le moment detecte seulement 
+{
+	int nb_complete = 0;
+	for (auto & line : presenceMap_)
+	{
+		if (line != presenceMap_.back()) //pas la ligne du sol
+		{
+			nb_complete++;
+			for (int c = 0 ; c < line.size() ; c++)
+			{
+				if (!line[c])
+					nb_complete --;
+			}
+		}
+	}
+	return nb_complete;
+}
+
 
 
 void Game::loop()
@@ -165,7 +189,7 @@ void Game::loop()
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
 		setCurrObj(co);
-		
+
 		// Keyboard management
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		keyboard( state );
@@ -187,6 +211,20 @@ void Game::loop()
 	//SDL_Quit();
 }
 
+void Game::drawShape(Graphics::GraphicsObject* obj)
+{
+	for ( const auto& p : obj->tiles_[ obj->getRotation() ] ) //tous les carrés
+	{
+		const int x = obj->getPositionX();
+		const int y = obj->getPositionY();
+		const int colorID = obj->getColor();
+		Sprite* obj_sprite = sprites_[ colorID ];
+
+		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y + p.second * grid_tileSize_ );
+	}
+}
+
+
 
 void Game::draw( double dt )
 {
@@ -200,7 +238,12 @@ void Game::draw( double dt )
         }
     }
 
-	{	// on affiche les 4 rotations d'une piece
+	//Affichage piece courante
+	drawShape(current_obj);
+	SDL_Delay(500);
+
+/* Affichage des 4 rotations d'une pièce
+	{
         static Graphics::ShapeL* shape_test;
         static bool is_shape_initialized = false;
         if ( ! is_shape_initialized )
@@ -235,6 +278,5 @@ void Game::draw( double dt )
 			// shape_test->move(grid_tileSize_*4, grid_tileSize_*4);
 			// std::cout << shape_test->getPositionX() << std::endl;
 		}
-    }
-
+    }*/
 }
