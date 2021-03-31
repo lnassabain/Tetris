@@ -48,6 +48,10 @@ void Window::finalize()
 	SDL_DestroyWindow( window_ );
 }
 
+Surface * Window::getSurface() {
+	return surface_;
+}
+
 
 /*Dessine sprite dans la fenetre aux coordonnees x et y*/
 void Window::draw( const Sprite& sprite, int x, int y )

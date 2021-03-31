@@ -23,6 +23,8 @@ public:
 
 	void update() const;
 
+    Surface * getSurface();
+
 
 protected:
     SDL_Window* window_;

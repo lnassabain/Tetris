@@ -146,23 +146,44 @@ Graphics::GraphicsObject* Game::shapeRand(){
  * Check if there are lines to remove and do it.
  * @return number of erased lines
  */
-int Game::eraseLine() //pour le moment detecte seulement 
-{
-	int nb_complete = 0;
-	for (auto & line : presenceMap_)
-	{
-		if (line != presenceMap_.back()) //pas la ligne du sol
-		{
-			nb_complete++;
-			for (int c = 0 ; c < line.size() ; c++)
-			{
-				if (!line[c])
-					nb_complete --;
-			}
-		}
-	}
-	return nb_complete;
-}
+// int Game::eraseLine() //pour le moment detecte seulement
+// {
+// 	int nb_complete = 0;
+//
+// 	// parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
+// 	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
+// 	{
+// 		std::vector< bool > line = presenceMap_[i];
+// 		size_t j = 0;
+//
+// 		while (j < line.size() && line[j])
+// 			j++;
+//
+// 		if (j == line.size()) //ligne complete de true
+// 		{
+// 			nb_complete++;
+//
+// 			/* on prend la surface de tout ce qu'il y a au dessus de cette ligne
+// 			et on la copie une ligne plus bas
+// 			+ on reaffiche le fond en haut
+// 			le numéro de ligne est i - 1
+// 			*/
+// 			int line_idx = i-1;
+// 			Sprite above ( window_->getSurface(), 0, 0,
+// 						grid_nbColumns_ * grid_tileSize_,
+// 						grid_tileSize_ * line_idx );
+//
+// 						/*
+// 						on draw la sprite une ligne plus bas + bg
+// 						 */
+//
+// 			// void Window::draw( const Sprite& sprite, int x, int y )
+// 			// Sprite::Sprite( const Surface* const s, int x, int y, int w, int h )
+//
+// 		}
+// 	}
+// 	return nb_complete;
+// }
 
 
 
