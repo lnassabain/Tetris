@@ -181,17 +181,6 @@ int Game::eraseLine()
 			std::cout << "Sprite above : width : " << grid_nbColumns_
 				<< " height : " << line_idx << std::endl;
 			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
-
-			for (int i = 0 ; i < grid_nbRows_ ; i++)
-			{
-				for (int j = 0; j < grid_nbColumns_ ; j++)
-				{
-					window_->draw(*sprites_[S_ROUGE], i, j);
-				}
-			}
-			window_->update();
-
-
 			window_->draw( above, 0, grid_tileSize_ );
 			std::cout << "On draw above" << std::endl;
 			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
@@ -295,13 +284,9 @@ void Game::drawBg(int y, int nbLines)
 	Sprite* sfond = sprites_[ S_GRIS ];
 	int height = nbLines * grid_tileSize_;
 
-	for ( int j = y, h = height; j <= h; j += sfond->height() ) // y
-	{
+	for ( int j = y, h = height; j < h; j += sfond->height() ) // y
 		for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )// x
-		{
 			window_->draw( *sfond, i, j );
-		}
-	}
 }
 
 void Game::draw( double dt )
