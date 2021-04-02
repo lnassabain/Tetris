@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <string>
 #include <iostream>
+#include <queue>
 #include "game.hpp"
 #include "GraphicsObject.h"
 
@@ -146,9 +147,11 @@ Graphics::GraphicsObject* Game::shapeRand(){
  * Check if there are lines to remove and do it.
  * @return number of erased lines
  */
-int Game::eraseLine() //pour le moment detecte seulement
+int Game::eraseLine()
 {
 	int nb_complete = 0;
+	std::queue <int> idx_erasedL; //pour la maj de presenceMap_
+
 	// parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
 	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
 	{
@@ -160,19 +163,41 @@ int Game::eraseLine() //pour le moment detecte seulement
 
 		if (j == line.size()) //ligne complete de true
 		{
+			int line_idx = i;
 			nb_complete++;
+			idx_erasedL.push(line_idx);
+
 			/* on prend la surface de tout ce qu'il y a au dessus de cette ligne
 			et on la copie une ligne plus bas
-			+ on reaffiche le fond en haut
-			*/
-			int line_idx = i;
+			+ on reaffiche le fond en haut */
 			Sprite above ( window_->getSurface(), 0, 0,
-						grid_nbColumns_ * grid_tileSize_,
-						grid_tileSize_ * line_idx );
-			window_->draw( above, 0, grid_tileSize_ ); //une ligne plus bas
-			drawBg( 0, 1 ); //une ligne de bg en haut
+						   grid_nbColumns_ * grid_tileSize_,
+						   grid_tileSize_ * line_idx );
+			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
+			window_->draw( above, 0, grid_tileSize_ );
+			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
 		}
 	}
+
+	// On met à jour presenceMap_
+	// Les lignes qui ont été décalées :
+	idx_erasedL.push(grid_nbRows_); //pour aller jusqu'au sol
+	int begin = nb_complete; //les ligne au dessus vont etre remplies de 0 après
+	for (size_t x = 0 ; x < idx_erasedL.size() ; x++) // le nombre de lignes pleines traitees
+	{
+		int& next_erasedL = idx_erasedL.front();
+		idx_erasedL.pop();
+		// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
+		for (size_t l = begin ; l < next_erasedL ; l++)
+		{
+			presenceMap_[ l ] = presenceMap_[ l - nb_complete - x ];
+		}
+		begin = next_erasedL;
+	}
+	// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
+	for (int i = 0 ; i < nb_complete ; i ++)
+		presenceMap_[i] = std::vector<bool>( grid_nbColumns_, false );
+
 	return nb_complete;
 }
 
@@ -257,11 +282,28 @@ void Game::drawBg(int y, int nbLines)
 
 void Game::draw( double dt )
 {
+	std::cout << dt << std::endl;
 	drawBg(0, grid_nbRows_);
 
+	// Affichage d'une ligne pleine et appel de eraseLine
+	presenceMap_[1] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
+	for (int i = 0 ; i < grid_nbColumns_ ; i++)
+		window_->draw(*sprites_[S_ORANGE], i*grid_tileSize_, 1*grid_tileSize_);
+	SDL_Delay(1000);
+
+	if (dt > 1)
+	{
+		int lignes = eraseLine();
+		std::cout << lignes << std::endl;
+
+	}
+
+
+/*
 	//Affichage piece courante
 	drawShape(current_obj);
 	SDL_Delay(500);
+*/
 
 /* Affichage des 4 rotations d'une pièce
 	{
