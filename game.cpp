@@ -184,28 +184,29 @@ int Game::eraseLine()
 			window_->draw( above, 0, grid_tileSize_ );
 			std::cout << "On draw above" << std::endl;
 			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
-			window_->update();
-			SDL_Delay(1000);
+			// window_->update();
+			// SDL_Delay(1000);
 		}
 	}
-
 	// On met à jour presenceMap_
 	// Les lignes qui ont été décalées :
-	idx_erasedL.push(grid_nbRows_); //pour aller jusqu'au sol
+	//idx_erasedL.push(grid_nbRows_); //pour aller jusqu'au sol
+
 	int begin = nb_complete; //les lignes au dessus vont etre remplies de 0 après
-	for (size_t x = 0 ; x < idx_erasedL.size() ; x++) // le nombre de lignes pleines traitees
+	for (size_t x = 0 ; x <= idx_erasedL.size() ; x++) // le nombre de lignes pleines traitees
 	{
 		int& next_erasedL = idx_erasedL.front();
+		std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 		idx_erasedL.pop();
 		// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
-		std::cout << "begin : " << begin << " end : " << next_erasedL << std::endl;
-		for (size_t l = begin ; l <= next_erasedL ; l++)
+		std::cout << "begin : " << begin << " end : " << nb_complete + next_erasedL - x << std::endl;
+		for (size_t l = begin ; l < nb_complete + next_erasedL - x ; l++)
 		{
-			presenceMap_[ l ] = presenceMap_[ l - nb_complete - x ];
-			std::cout << "ligne " << l << " de presenceMap_ devient " << l - nb_complete - x
-					<< std::endl;
+			presenceMap_[ l ] = presenceMap_[ l - nb_complete + x ];
+			std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
+					  << l - nb_complete + x << std::endl;
 		}
-		begin = next_erasedL;
+		begin += next_erasedL;
 	}
 	// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 	for (int i = 0 ; i < nb_complete ; i ++)
@@ -295,9 +296,18 @@ void Game::draw( double dt )
 	drawBg(0, grid_nbRows_);
 
 	// Affichage d'une ligne pleine et appel de eraseLine
-	presenceMap_[1] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
+
+	int lignePleine = 2;
+	presenceMap_[lignePleine] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
 	for (int i = 0 ; i < grid_nbColumns_ ; i++)
-		window_->draw(*sprites_[S_ORANGE], i*grid_tileSize_, 1*grid_tileSize_);
+		window_->draw(*sprites_[S_ORANGE], i*grid_tileSize_, lignePleine*grid_tileSize_);
+
+	// Avec 2 lignes pleines :
+	int lignePleine2 = 4;
+	presenceMap_[lignePleine2] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
+	for (int i = 0 ; i < grid_nbColumns_ ; i++)
+		window_->draw(*sprites_[S_CYAN], i*grid_tileSize_, lignePleine2*grid_tileSize_);
+
 
 	// On rajoute un bloc au dessus à descendre avec eraseLine
 	window_->draw(*sprites_[S_BLEU], 2*grid_tileSize_, 0);
