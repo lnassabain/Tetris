@@ -37,6 +37,7 @@ protected:
 
 	void draw( double dt );
 	void drawShape(Graphics::GraphicsObject* obj); //a voir si ce serait pas drawCurrentObject
+	void drawBg(int y, int nbLines);
 
     /*Keyboard management*/
 	void keyboard( const std::uint8_t* keys );
@@ -45,7 +46,7 @@ private:
 	Surface* planche_;
 	std::vector< Sprite* > sprites_;
 
-	std::list< std::vector< bool > > presenceMap_;
+	std::vector< std::vector< bool > > presenceMap_;
 
 	void drawMap();
 
