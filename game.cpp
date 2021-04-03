@@ -90,7 +90,7 @@ void Game::setCurrObj(Graphics::GraphicsObject* obj){
 
 bool Game::collisionLeft()
 {
-	bool isMovingLeftOK = true;
+	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int x = co->getPositionX();
@@ -100,16 +100,16 @@ bool Game::collisionLeft()
 	{
 		if ((x + (p.first-1) * grid_tileSize_) < 0) // si le coin gauche du carré est inférieur à 0
 		{
-			isMovingLeftOK = false;
+			isCollision = true;
 		}
 	}
 
-	return isMovingLeftOK;
+	return isCollision;
 }
 
 bool Game::collisionRight()
 {
-	bool isMovingRightOK = true;
+	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int x = co->getPositionX();
@@ -119,11 +119,11 @@ bool Game::collisionRight()
 	{
 		if ((x + (p.first+1)*grid_tileSize_) > window_->width()-grid_tileSize_)
 		{
-			isMovingRightOK = false;
+			isCollision = true;
 		}
 	}
 
-	return isMovingRightOK;
+	return isCollision;
 }
 
 bool Game::collisionDown()
@@ -132,7 +132,7 @@ bool Game::collisionDown()
 	int new_y;
 	int placeXinPM; //place du carré dans le PresenceMap, coord. x
 	int placeYinPM; //place du carré dans le PresenceMap, coord. y
-	bool isMovingDownOK = true;
+	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int x = co->getPositionX();
@@ -149,11 +149,11 @@ bool Game::collisionDown()
 
 		if (presenceMap_[placeXinPM][placeYinPM] == true)
 		{
-			isMovingDownOK = false;
+			isCollision = true;
 		}
 	}
 
-	return isMovingDownOK;
+	return isCollision;
 }
 
 
@@ -166,14 +166,26 @@ void Game::keyboard( const std::uint8_t* keys )
 	if (keys[SDL_SCANCODE_UP]){
 		co -> rotate();
 	}
-	if (keys[SDL_SCANCODE_LEFT]){
-		co -> setPositionX(x-grid_tileSize_);
+	if (keys[SDL_SCANCODE_LEFT])
+	{
+		if (!collisionLeft()) //test si possible de se deplacer vers la gauche
+		{
+			co -> setPositionX(x-grid_tileSize_);
+		}
 	}
-	if (keys[SDL_SCANCODE_RIGHT]){
-		co -> setPositionX(x+grid_tileSize_);
+	if (keys[SDL_SCANCODE_RIGHT])
+	{
+		if (!collisionRight()) //test si possible de se deplacer vers la droite
+		{
+			co -> setPositionX(x+grid_tileSize_);
+		}
 	}
-	if (keys[SDL_SCANCODE_DOWN]){
-		co -> setPositionY(y+grid_tileSize_);
+	if (keys[SDL_SCANCODE_DOWN])
+	{
+		if (!collisionDown()) //test si possible de se deplacer vers le bas
+		{
+			co -> setPositionY(y+grid_tileSize_);
+		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
 		//l'objet tombe et touche le fond
@@ -315,7 +327,7 @@ void Game::loop()
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
 		setCurrObj(co);
-
+		
 		// Keyboard management
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		keyboard( state );
