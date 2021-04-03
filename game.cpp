@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <queue>
+#include <stack>
 #include "game.hpp"
 #include "GraphicsObject.h"
 
@@ -54,6 +55,7 @@ void Game::initialize()
     est a true, il y a collision*/
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
 	presenceMap_.push_back( std::vector< bool >( grid_nbColumns_, true ) ); //le sol
+	//std::cout << "taille de presenceMap_ " << presenceMap_.size() << std::endl;
 
     const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
 	const int windowHeight = grid_nbRows_ * grid_tileSize_;
@@ -145,12 +147,13 @@ Graphics::GraphicsObject* Game::shapeRand(){
 
 /**
  * Check if there are lines to remove and do it.
- * @return number of erased lines
+ * @return number of erased lines, to calculate the new score
  */
 int Game::eraseLine()
 {
 	int nb_complete = 0;
-	std::queue <int> idx_erasedL; //pour la maj de presenceMap_
+	std::stack <int> idx_erasedL; //pour la maj de presenceMap_
+	idx_erasedL.push(-1); //pour aller jusqu'en haut dans la maj de presenceMap_
 
 	// parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
 	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
@@ -190,23 +193,26 @@ int Game::eraseLine()
 	}
 	// On met à jour presenceMap_
 	// Les lignes qui ont été décalées :
-	//idx_erasedL.push(grid_nbRows_); //pour aller jusqu'au sol
 
-	int begin = nb_complete; //les lignes au dessus vont etre remplies de 0 après
-	for (size_t x = 0 ; x <= idx_erasedL.size() ; x++) // le nombre de lignes pleines traitees
+	int& next_erasedL = idx_erasedL.top(); //last element of stack
+	std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+	idx_erasedL.pop();
+	size_t begin = next_erasedL;
+	for (size_t x = 1 ; x <= nb_complete ; x++) // numero de la ligne pleine en cours
 	{
-		int& next_erasedL = idx_erasedL.front();
+		int& next_erasedL = idx_erasedL.top(); //last element of stack
 		std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 		idx_erasedL.pop();
+		size_t end = next_erasedL + x ;
 		// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
-		std::cout << "begin : " << begin << " end : " << nb_complete + next_erasedL - x << std::endl;
-		for (size_t l = begin ; l < nb_complete + next_erasedL - x ; l++)
+		std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
+		for (size_t l = begin ; l > end ; l--)
 		{
-			presenceMap_[ l ] = presenceMap_[ l - nb_complete + x ];
+			presenceMap_[ l ] = presenceMap_[ l - x ];
 			std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
-					  << l - nb_complete + x << std::endl;
+					  << l - x << std::endl;
 		}
-		begin += next_erasedL;
+		begin = end;
 	}
 	// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 	for (int i = 0 ; i < nb_complete ; i ++)
@@ -302,16 +308,26 @@ void Game::draw( double dt )
 	for (int i = 0 ; i < grid_nbColumns_ ; i++)
 		window_->draw(*sprites_[S_ORANGE], i*grid_tileSize_, lignePleine*grid_tileSize_);
 
-	// Avec 2 lignes pleines :
-	int lignePleine2 = 4;
+	// Avec plusieurs lignes pleines :
+	int lignePleine2 = 10;
 	presenceMap_[lignePleine2] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
 	for (int i = 0 ; i < grid_nbColumns_ ; i++)
 		window_->draw(*sprites_[S_CYAN], i*grid_tileSize_, lignePleine2*grid_tileSize_);
 
+	int lignePleine3 = 19;
+	presenceMap_[lignePleine3] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
+	for (int i = 0 ; i < grid_nbColumns_ ; i++)
+		window_->draw(*sprites_[S_VIOLET], i*grid_tileSize_, lignePleine3*grid_tileSize_);
 
-	// On rajoute un bloc au dessus à descendre avec eraseLine
+
+	// On rajoute des blocs à descendre avec eraseLine
 	window_->draw(*sprites_[S_BLEU], 2*grid_tileSize_, 0);
 	presenceMap_[0][2] = true;
+	window_->draw(*sprites_[S_ROUGE], 6*grid_tileSize_, grid_tileSize_);
+	presenceMap_[1][6] = true;
+	window_->draw(*sprites_[S_JAUNE], 4*grid_tileSize_, 3*grid_tileSize_);
+	presenceMap_[3][4] = true;
+
 
 	SDL_Delay(1000);
 
@@ -320,7 +336,7 @@ void Game::draw( double dt )
 		int lignes = eraseLine();
 		std::cout << "ligne.s retirée.s : " << lignes << std::endl;
 
-		for (int i = 0 ; i < grid_nbRows_ ; i++)
+		for (int i = 0 ; i < presenceMap_.size() ; i++)
 			for (int j = 0 ; j < grid_nbColumns_ ; j++)
 				std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
 	}
