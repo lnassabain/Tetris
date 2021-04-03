@@ -88,6 +88,75 @@ void Game::setCurrObj(Graphics::GraphicsObject* obj){
 	current_obj = obj;
 }
 
+bool Game::collisionLeft()
+{
+	bool isMovingLeftOK = true;
+	Graphics::GraphicsObject* co;
+	co = getCurrObj();
+	int x = co->getPositionX();
+
+	const Graphics::TShape shapeTiles = co->tiles_[ co->getRotation() ]; //current rotation ID;
+	for ( const auto& p : shapeTiles ) //tous les carrés
+	{
+		if ((x + (p.first-1) * grid_tileSize_) < 0) // si le coin gauche du carré est inférieur à 0
+		{
+			isMovingLeftOK = false;
+		}
+	}
+
+	return isMovingLeftOK;
+}
+
+bool Game::collisionRight()
+{
+	bool isMovingRightOK = true;
+	Graphics::GraphicsObject* co;
+	co = getCurrObj();
+	int x = co->getPositionX();
+
+	const Graphics::TShape shapeTiles = co->tiles_[co->getRotation()];
+	for (const auto& p : shapeTiles)
+	{
+		if ((x + (p.first+1)*grid_tileSize_) > window_->width()-grid_tileSize_)
+		{
+			isMovingRightOK = false;
+		}
+	}
+
+	return isMovingRightOK;
+}
+
+bool Game::collisionDown()
+{
+	int new_x;
+	int new_y;
+	int placeXinPM; //place du carré dans le PresenceMap, coord. x
+	int placeYinPM; //place du carré dans le PresenceMap, coord. y
+	bool isMovingDownOK = true;
+	Graphics::GraphicsObject* co;
+	co = getCurrObj();
+	int x = co->getPositionX();
+	int y = co->getPositionY();
+
+	const Graphics::TShape shapeTiles = co->tiles_[co->getRotation()];
+	for (const auto& p : shapeTiles)
+	{
+		new_x = x + p.first * grid_tileSize_;
+		new_y = y + (p.second+1)*grid_tileSize_;
+
+		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
+		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
+
+		if (presenceMap_[placeXinPM][placeYinPM] == true)
+		{
+			isMovingDownOK = false;
+		}
+	}
+
+	return isMovingDownOK;
+}
+
+
 void Game::keyboard( const std::uint8_t* keys )
 {
 	Graphics::GraphicsObject* co;

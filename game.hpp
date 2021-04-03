@@ -30,6 +30,9 @@ public:
 	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant
 	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
 	int eraseLine();
+	bool collisionLeft();
+	bool collisionRight();
+	bool collisionDown();
 
 protected:
 	/*Graphics window*/
