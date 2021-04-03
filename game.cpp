@@ -328,7 +328,36 @@ void Game::loop()
 		co = shapeRand();
 		setCurrObj(co);
 		
-		// Keyboard management
+		/*bool toucheFond = false;
+		int lastTime=0;
+		int currentTime;
+		int y;
+
+		while (!quit && !toucheFond)
+		{
+			//keyboard management
+			const Uint8* state = SDL_GetKeyboardState(NULL);
+			keyboard( state );
+			quit |= state[ SDL_SCANCODE_ESCAPE ];
+
+			currentTime = SDL_GetTicks();
+			if (currentTime > lastTime + 1000)
+			{
+				if (!collisionDown()) //si on peut se deplacer vers le bas
+				{
+					y = co -> getPositionY();
+					//on se deplace vers le bas
+					co -> setPositionY(y + grid_tileSize_);
+				}
+				else
+				{
+					toucheFond = true;
+				}
+				lastTime = currentTime;
+			}
+		}*/
+
+		//keyboard management
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		keyboard( state );
 		quit |= state[ SDL_SCANCODE_ESCAPE ];
@@ -346,7 +375,7 @@ void Game::loop()
 		// Update window (refresh)
 		window_->update();
 	}
-	//SDL_Quit();
+	SDL_Quit();
 }
 
 void Game::drawShape(Graphics::GraphicsObject* obj)
