@@ -55,7 +55,9 @@ void Game::initialize()
     est a true, il y a collision*/
     presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
 	presenceMap_.push_back( std::vector< bool >( grid_nbColumns_, true ) ); //le sol
-	//std::cout << "taille de presenceMap_ " << presenceMap_.size() << std::endl;
+	// for (int i = 0 ; i < presenceMap_.size() ; i++)
+	// 	for (int j = 0 ; j < grid_nbColumns_ ; j++)
+	// 		std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
 
     const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
 	const int windowHeight = grid_nbRows_ * grid_tileSize_;
@@ -147,7 +149,7 @@ bool Game::collisionDown()
 		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
 		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
 
-		if (presenceMap_[placeXinPM][placeYinPM] == true)
+		if (presenceMap_[placeYinPM][placeXinPM] == true)
 		{
 			isCollision = true;
 		}
@@ -274,7 +276,6 @@ int Game::eraseLine()
 	}
 	// On met à jour presenceMap_
 	// Les lignes qui ont été décalées :
-
 	int& next_erasedL = idx_erasedL.top(); //last element of stack
 	std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 	idx_erasedL.pop();
@@ -323,12 +324,13 @@ void Game::loop()
 				break;
 			}
 		}
+
 		//On cree l'objet courant
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
 		setCurrObj(co);
-		
-		/*bool toucheFond = false;
+
+		bool toucheFond = false;
 		int lastTime=0;
 		int currentTime;
 		int y;
@@ -348,32 +350,32 @@ void Game::loop()
 					y = co -> getPositionY();
 					//on se deplace vers le bas
 					co -> setPositionY(y + grid_tileSize_);
+					std::cout << "La pièce principale descend" << std::endl;
 				}
 				else
 				{
 					toucheFond = true;
+					std::cout << "La pièce principale touche le fond" << std::endl;
+					// on l'ajoute à la matrice de presence
 				}
 				lastTime = currentTime;
 			}
-		}*/
 
-		//keyboard management
-		const Uint8* state = SDL_GetKeyboardState(NULL);
-		keyboard( state );
-		quit |= state[ SDL_SCANCODE_ESCAPE ];
+			// TETRIS algo
+			// - erase lines
+			// - insert lines
 
-		// TETRIS algo
-		// - erase lines
-		// - insert lines
+			// Rendering stage
+			prev = now;
+			now = SDL_GetPerformanceCounter();
+			double delta_t = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
+			draw( delta_t );
 
-		// Rendering stage
-		prev = now;
-		now = SDL_GetPerformanceCounter();
-		double delta_t = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
-		draw( delta_t );
+			// Update window (refresh)
+			window_->update();
 
-		// Update window (refresh)
-		window_->update();
+		}
+
 	}
 	SDL_Quit();
 }
@@ -408,11 +410,18 @@ void Game::drawBg(int y, int nbLines)
 
 void Game::draw( double dt )
 {
-	std::cout << "nouvelle boucle : dt = " << dt << std::endl;
+	//std::cout << "On draw : dt = " << dt << std::endl;
 	drawBg(0, grid_nbRows_);
 
-	// Affichage d'une ligne pleine et appel de eraseLine
+	//Affichage piece courante
+	drawShape(current_obj);
+	//SDL_Delay(500);
 
+
+
+
+	// Affichage d'une ligne pleine et appel de eraseLine
+/*
 	int lignePleine = 2;
 	presenceMap_[lignePleine] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
 	for (int i = 0 ; i < grid_nbColumns_ ; i++)
@@ -452,12 +461,8 @@ void Game::draw( double dt )
 	}
 
 	std::cout << "fin de game::draw()" << std::endl;
-
-/*
-	//Affichage piece courante
-	drawShape(current_obj);
-	SDL_Delay(500);
 */
+
 
 /* Affichage des 4 rotations d'une pièce
 	{
