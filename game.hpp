@@ -29,6 +29,7 @@ public:
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
 	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant
 	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
+	void addToPresMap(Graphics::GraphicsObject* obj); //Noie un objet dans la presenceMap
 	int eraseLine();
 	bool collisionLeft();
 	bool collisionRight();
@@ -41,7 +42,7 @@ protected:
 	void draw( double dt );
 	void drawShape(Graphics::GraphicsObject* obj); //a voir si ce serait pas drawCurrentObject
 	void drawBg(int y, int nbLines);
-
+	void drawPresMap();
     /*Keyboard management*/
 	void keyboard( const std::uint8_t* keys );
 

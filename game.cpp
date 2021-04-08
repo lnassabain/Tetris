@@ -305,6 +305,47 @@ int Game::eraseLine()
 
 
 
+void Game::addToPresMap(Graphics::GraphicsObject* obj)
+{
+	int carre_x, carre_y;
+	int placeXinPM, placeYinPM;
+	int x = obj -> getPositionX();
+	int y = obj -> getPositionY();
+
+
+	for (const auto& p : obj->tiles_[ obj->getRotation() ] )
+	{
+		carre_x = x + p.first*grid_tileSize_;
+		carre_y = y + p.second*grid_tileSize_;
+
+		placeXinPM = carre_x / grid_tileSize_;
+		placeYinPM = carre_y / grid_tileSize_;
+
+		presenceMap_[placeYinPM][placeXinPM] = true;
+	}
+
+	return;
+}
+
+void Game::drawPresMap()
+{
+	int i, j;
+	Sprite* obj_sprite = sprites_[ S_ROUGE];//presence map sera en rouge
+
+	for (i=0; i<grid_nbRows_; i++)
+	{
+		for (j=0; j<grid_nbColumns_; j++)
+		{
+			if (presenceMap_[i][j]==true)
+			{
+				window_->draw( *obj_sprite, j*grid_tileSize_,i*grid_tileSize_);
+			}
+		}
+	}
+
+	return;
+}
+
 void Game::loop()
 {
 	Uint64 now = SDL_GetPerformanceCounter(); // timers
@@ -313,30 +354,34 @@ void Game::loop()
 	bool quit = false;
 	while ( !quit )
 	{
-		// Event management
-		SDL_Event event;
-		while ( !quit && SDL_PollEvent( &event ) )
-		{
-			switch ( event.type )
-			{
-			case SDL_QUIT:
-				quit = true;
-				break;
-			}
-		}
-
 		//On cree l'objet courant
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
 		setCurrObj(co);
-
+		
 		bool toucheFond = false;
 		int lastTime=0;
 		int currentTime;
 		int y;
 
+		drawBg(0, grid_nbRows_);
+		drawPresMap();
+		drawShape(co);
+
+
 		while (!quit && !toucheFond)
 		{
+			// Event management
+			SDL_Event event;
+			while ( !quit && SDL_PollEvent( &event ) )
+			{		
+				switch ( event.type )
+				{
+					case SDL_QUIT:
+						quit = true;
+						break;
+				}
+			}
 			//keyboard management
 			const Uint8* state = SDL_GetKeyboardState(NULL);
 			keyboard( state );
@@ -361,19 +406,15 @@ void Game::loop()
 				lastTime = currentTime;
 			}
 
-			// TETRIS algo
-			// - erase lines
-			// - insert lines
-
-			// Rendering stage
-			prev = now;
-			now = SDL_GetPerformanceCounter();
-			double delta_t = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
-			draw( delta_t );
-
+			drawBg(0, grid_nbRows_);
+			drawPresMap();
+			drawShape(co);
 			// Update window (refresh)
 			window_->update();
-
+		}
+		if (toucheFond)
+		{
+			addToPresMap(co);
 		}
 
 	}
