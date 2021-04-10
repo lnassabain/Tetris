@@ -348,9 +348,6 @@ void Game::drawPresMap()
 
 void Game::loop()
 {
-	Uint64 now = SDL_GetPerformanceCounter(); // timers
-	Uint64 prev = now;
-
 	bool quit = false;
 	while ( !quit )
 	{
@@ -360,6 +357,7 @@ void Game::loop()
 		setCurrObj(co);
 		
 		bool toucheFond = false;
+		bool check_key = false; //un bouton a été appuyé si true
 		int lastTime=0;
 		int currentTime;
 		int y;
@@ -371,6 +369,7 @@ void Game::loop()
 
 		while (!quit && !toucheFond)
 		{
+
 			// Event management
 			SDL_Event event;
 			while ( !quit && SDL_PollEvent( &event ) )
@@ -380,12 +379,21 @@ void Game::loop()
 					case SDL_QUIT:
 						quit = true;
 						break;
+					
+					case SDL_KEYDOWN:
+						check_key= true;
+						break;
+					
 				}
 			}
 			//keyboard management
-			const Uint8* state = SDL_GetKeyboardState(NULL);
-			keyboard( state );
-			quit |= state[ SDL_SCANCODE_ESCAPE ];
+			if (check_key==true)
+			{
+				const Uint8* state = SDL_GetKeyboardState(NULL);
+				keyboard( state );
+				quit |= state[ SDL_SCANCODE_ESCAPE ];
+				check_key = false;
+			}
 
 			currentTime = SDL_GetTicks();
 			if (currentTime > lastTime + 1000)
