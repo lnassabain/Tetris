@@ -117,6 +117,16 @@ bool Game::collisionRotation()
 		{
 			isCollision = true;
 		}
+
+		else if (new_x < 0)
+		{
+			isCollision = true;
+		}
+
+		else if (new_x > window_->width()-grid_tileSize_)
+		{
+			isCollision = true;
+		}
 	}
 
 	return isCollision;
