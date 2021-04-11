@@ -5,6 +5,7 @@
 #include <utility>
 
 
+#define TILE_SIZE 32 
 enum Color : char {c_gris, c_rouge, c_jaune, c_vert, c_bleu, c_violet, c_orange, c_cyan};
 
 namespace Graphics
@@ -37,12 +38,11 @@ public:
 	void move(int newX, int newY);
 	void rotate();
 
+
 protected:
 
 	// Constructor
-	GraphicsObject();
-	Color c;
-
+	GraphicsObject(int x, Color c);
 
 private:
 
@@ -50,8 +50,7 @@ private:
 	int x;
 	int y;
 	int rotation;
-
-
+	Color c;
 };
 
 class ShapeI : public GraphicsObject

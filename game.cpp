@@ -440,6 +440,7 @@ void Game::calcul_score(int nb_line)
 		case 4 :
 			score += 1200 * level;
 			tot_line += 8;
+			std::cout << "TETRIS !" << std::endl;
 			break;
 		default :
 			std::cerr << "default case in switch(nb_line) in calcul_score" << std::endl;
@@ -450,7 +451,7 @@ void Game::calcul_score(int nb_line)
 
 void Game::levelUp()
 {
-	if ( tot_line >= 1 * (level) )
+	if ( tot_line >= 10 * (level) )
 	{
 		level ++;
 		double mult = 0.8 - (level-1) * 0.007 ;
@@ -464,8 +465,8 @@ void Game::levelUp()
 	if (level == 16)
 	{
 		std::cout << "LEVEL 15 COMPLETED : SCORE = " << score
-				  << " CONGRATULATION" << std::endl;
-		exit(0);		  
+				  << " CONGRATULATION !" << std::endl;
+		exit(0);
 	}
 }
 
