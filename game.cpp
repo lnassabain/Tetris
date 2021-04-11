@@ -28,7 +28,7 @@ Game::Game()
 ,	grid_tileSize_( 0 )
 ,	current_obj( nullptr )
 ,	score( 0 )
-,	level( 0 )
+,	level( 1 )
 ,	tot_line( 0 )
 , 	speed( 1000 )
 {
@@ -426,19 +426,19 @@ void Game::calcul_score(int nb_line)
 		case 0 :
 			return;
 		case 1 :
-			score += 40 * (level + 1);
+			score += 40 * level;
 			tot_line += 1;
 			break;
 		case 2 :
-			score += 100 * (level + 1);
+			score += 100 * level;
 			tot_line += 3;
 			break;
 		case 3 :
-			score += 300 * (level + 1);
+			score += 300 * level;
 			tot_line += 5;
 			break;
 		case 4 :
-			score += 1200 * (level + 1);
+			score += 1200 * level;
 			tot_line += 8;
 			break;
 		default :
@@ -450,15 +450,22 @@ void Game::calcul_score(int nb_line)
 
 void Game::levelUp()
 {
-	if ( tot_line >= 1 * (level+1) )
+	if ( tot_line >= 1 * (level) )
 	{
 		level ++;
-		double mult = 0.8 - level * 0.007 ;
+		double mult = 0.8 - (level-1) * 0.007 ;
 		speed = mult;
-		for (int i = 0 ; i < level-1 ; i++)
+		for (int i = 0 ; i < level-2 ; i++)
 			speed *= mult;
 		speed *= 1000;
 		std::cout << "LEVEL UP : " << level << std::endl;
+	}
+
+	if (level == 16)
+	{
+		std::cout << "LEVEL 15 COMPLETED : SCORE = " << score
+				  << " CONGRATULATION" << std::endl;
+		exit(0);		  
 	}
 }
 
