@@ -300,12 +300,20 @@ void Game::keyboard( const std::uint8_t* keys )
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
+<<<<<<< HEAD
 		int l = 0;
 		while (!collisionDown() && l < grid_nbRows_)
 		{
 			l ++;
 			co->setPositionY(y + grid_tileSize_ * l);
 		}
+=======
+		//l'objet tombe et touche le fond
+		/*while (!collisionDown())
+		{
+			co->setPositionY(y+grid_tileSize_);
+		}*/
+>>>>>>> 3b76280cd733a3fe43dbba4401e4ae16238da593
 	}
 	return;
 }
@@ -578,6 +586,7 @@ void Game::loop()
 					toucheFond = true;
 				//	std::cout << "La pièce principale touche le fond" << std::endl;
 					// on l'ajoute à la matrice de presence
+					addToPresMap(co);
 				}
 				lastTime = currentTime;
 			}
@@ -591,10 +600,6 @@ void Game::loop()
 			drawShape(co);
 			// Update window (refresh)
 			window_->update();
-		}
-		if (toucheFond)
-		{
-			addToPresMap(co);
 		}
 
 	}
