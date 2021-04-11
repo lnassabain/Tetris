@@ -59,8 +59,8 @@ void Game::initialize()
     arrete de bouger (touche le fond), on met la matrice à cette zone à true.
     De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
     est a true, il y a collision*/
-    presenceMap_.resize( grid_nbRows_, std::vector< bool >( grid_nbColumns_, false ) );
-	presenceMap_.push_back( std::vector< bool >( grid_nbColumns_, true ) ); //le sol
+    presenceMap_.resize( grid_nbRows_, std::vector< int >( grid_nbColumns_, 0 ) );
+	presenceMap_.push_back( std::vector< int >( grid_nbColumns_, 1 ) ); //le sol
 	// for (int i = 0 ; i < presenceMap_.size() ; i++)
 	// 	for (int j = 0 ; j < grid_nbColumns_ ; j++)
 	// 		std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
@@ -118,7 +118,7 @@ bool Game::collisionRotation()
 		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
 		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
 
-		if (presenceMap_[placeYinPM][placeXinPM] == true)
+		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
 			isCollision = true;
 		}
@@ -164,7 +164,7 @@ bool Game::collisionLeft()
 		{
 			placeXinPM = new_x / grid_tileSize_;
 			placeYinPM = new_y / grid_tileSize_;
-			if (presenceMap_[placeYinPM][placeXinPM] == true)
+			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
 				isCollision = true;
 			}
@@ -198,7 +198,7 @@ bool Game::collisionRight()
 		{
 			placeXinPM = new_x / grid_tileSize_;
 			placeYinPM = new_y / grid_tileSize_;
-			if (presenceMap_[placeYinPM][placeXinPM] == true)
+			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
 				isCollision = true;
 			}
@@ -229,7 +229,7 @@ bool Game::collisionDown()
 		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
 		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
 
-		if (presenceMap_[placeYinPM][placeXinPM] == true)
+		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
 			isCollision = true;
 		}
@@ -256,7 +256,7 @@ bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 		placeXinPM = new_x / grid_tileSize_;
 		placeYinPM = new_y / grid_tileSize_;
 
-		if (presenceMap_[placeYinPM][placeXinPM] == true)
+		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
 			isCollision = true;
 		}
@@ -355,10 +355,10 @@ int Game::eraseLine()
 	// parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
 	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
 	{
-		std::vector< bool > line = presenceMap_[i];
+		std::vector< int > line = presenceMap_[i];
 		size_t j = 0;
 
-		while (j < line.size() && line[j])
+		while (j < line.size() && line[j]!=0)
 		{
 			//std::cout << "case remplie : " << j << std::endl;
 			j++;
@@ -414,7 +414,7 @@ int Game::eraseLine()
 		}
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
-			presenceMap_[i] = std::vector<bool>( grid_nbColumns_, false );
+			presenceMap_[i] = std::vector<int>( grid_nbColumns_, 0 );
 	}
 	return nb_complete;
 }
@@ -477,6 +477,7 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 	int placeXinPM, placeYinPM;
 	int x = obj -> getPositionX();
 	int y = obj -> getPositionY();
+	int colID = obj->getColor();
 
 
 	for (const auto& p : obj->tiles_[ obj->getRotation() ] )
@@ -487,7 +488,7 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 		placeXinPM = carre_x / grid_tileSize_;
 		placeYinPM = carre_y / grid_tileSize_;
 
-		presenceMap_[placeYinPM][placeXinPM] = true;
+		presenceMap_[placeYinPM][placeXinPM] = colID;
 	}
 
 	return;
@@ -496,15 +497,17 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 void Game::drawPresMap()
 {
 	int i, j;
-	Sprite* obj_sprite = sprites_[ S_ROUGE ];//presence map sera en rouge
+	int colID;
 
 	for (i=0; i<grid_nbRows_; i++)
 	{
 		for (j=0; j<grid_nbColumns_; j++)
 		{
-			if (presenceMap_[i][j]==true)
+			colID = presenceMap_[i][j];
+
+			if (colID != 0)
 			{
-				window_->draw( *obj_sprite, j*grid_tileSize_,i*grid_tileSize_);
+				window_->draw( *sprites_[colID], j*grid_tileSize_,i*grid_tileSize_);
 			}
 		}
 	}

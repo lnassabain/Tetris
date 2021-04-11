@@ -52,7 +52,7 @@ private:
 	Surface* planche_;
 	std::vector< Sprite* > sprites_;
 
-	std::vector< std::vector< bool > > presenceMap_;
+	std::vector< std::vector< int > > presenceMap_;
 
 	void drawMap();
 
