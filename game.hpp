@@ -31,6 +31,7 @@ public:
 	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
 	void addToPresMap(Graphics::GraphicsObject* obj); //Noie un objet dans la presenceMap
 	int eraseLine();
+	bool collisionCreation(Graphics::GraphicsObject* obj); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
 	bool collisionLeft();
 	bool collisionRight();
 	bool collisionDown();

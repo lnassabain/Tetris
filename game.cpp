@@ -234,6 +234,34 @@ bool Game::collisionDown()
 }
 
 
+bool Game::collisionCreation(Graphics::GraphicsObject* obj)
+{
+	bool isCollision = false;
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
+	int new_x, new_y;
+	int placeXinPM, placeYinPM;
+
+	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
+	for (const auto& p : shapeTiles)
+	{
+		new_x = x + p.first * grid_tileSize_;
+		new_y = y + p.second * grid_tileSize_;
+
+		placeXinPM = new_x / grid_tileSize_;
+		placeYinPM = new_y / grid_tileSize_;
+
+		if (presenceMap_[placeYinPM][placeXinPM] == true)
+		{
+			isCollision = true;
+		}
+	}
+
+	return isCollision;
+}
+
+
+
 void Game::keyboard( const std::uint8_t* keys )
 {
 	Graphics::GraphicsObject* co;
@@ -433,8 +461,15 @@ void Game::loop()
 		//On cree l'objet courant
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
+		if(collisionCreation(co))
+		{
+			std::cout << "GAME OVER" << std::endl;
+			exit(0);
+		}
 		setCurrObj(co);
 		
+		
+
 		bool toucheFond = false;
 		bool check_key = false; //un bouton a été appuyé si true
 		int lastTime=0;
