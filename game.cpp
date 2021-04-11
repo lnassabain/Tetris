@@ -539,7 +539,8 @@ void Game::loop()
 		drawBg(0, grid_nbRows_);
 		drawPresMap();
 		drawShape(co);
-
+		window_->update();
+		SDL_Delay(500);
 
 		while (!quit && !toucheFond)
 		{
