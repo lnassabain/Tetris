@@ -62,6 +62,13 @@ private:
 	int grid_tileSize_;
 	Graphics::GraphicsObject* current_obj;
 
+	int score;
+	int level;
+	int tot_line;
+	double speed;
+	void calcul_score(int nb_line);
+	void levelUp();
+
 };
 
 #endif

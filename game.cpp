@@ -4,6 +4,7 @@
 #include <queue>
 #include <stack>
 #include <cstdlib>
+#include <math.h>
 #include "game.hpp"
 #include "GraphicsObject.h"
 
@@ -28,6 +29,8 @@ Game::Game()
 ,	current_obj( nullptr )
 ,	score( 0 )
 ,	level( 0 )
+,	tot_line( 0 )
+, 	speed( 1000 )
 {
 }
 
@@ -414,31 +417,52 @@ int Game::eraseLine()
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
 			presenceMap_[i] = std::vector<bool>( grid_nbColumns_, false );
-
-		// On augmente le score :
-		switch (nb_complete)
-		{
-			case 1 :
-				score += 40;
-				break;
-			case 2 :
-				score += 100;
-				break;
-			case 3 :
-				score += 300;
-				break;
-			case 4 :
-				score += 1200;
-				break;
-			default :
-				std::cerr << "default case in switch(nb_complete) in eraseLine" << std::endl;
-				exit(1);
-		}
-		std::cout << "New score : " << score << std::endl;
 	}
 	return nb_complete;
 }
 
+void Game::calcul_score(int nb_line)
+{
+	switch (nb_line)
+	{
+		case 0 :
+			return;
+		case 1 :
+			score += 40 * (level + 1);
+			tot_line += 1;
+			break;
+		case 2 :
+			score += 100 * (level + 1);
+			tot_line += 3;
+			break;
+		case 3 :
+			score += 300 * (level + 1);
+			tot_line += 5;
+			break;
+		case 4 :
+			score += 1200 * (level + 1);
+			tot_line += 8;
+			break;
+		default :
+			std::cerr << "default case in switch(nb_line) in calcul_score" << std::endl;
+			exit(1);
+	}
+	std::cout << "New score : " << score << std::endl;
+}
+
+void Game::levelUp()
+{
+	if ( tot_line >= 1 * (level+1) )
+	{
+		level ++;
+		double mult = 0.8 - level * 0.007 ;
+		speed = mult;
+		for (int i = 0 ; i < level-1 ; i++)
+			speed *= mult;
+		speed *= 1000;
+		std::cout << "LEVEL UP : " << level << std::endl;
+	}
+}
 
 
 void Game::addToPresMap(Graphics::GraphicsObject* obj)
@@ -492,7 +516,8 @@ void Game::loop()
 		co = shapeRand();
 		if(collisionCreation(co))
 		{
-			std::cout << "GAME OVER" << std::endl;
+			std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
+					  << std::endl;
 			exit(0);
 		}
 		setCurrObj(co);
@@ -539,7 +564,7 @@ void Game::loop()
 			}
 
 			currentTime = SDL_GetTicks();
-			if (currentTime > lastTime + 700)
+			if (currentTime > lastTime + speed)
 			{
 				if (!collisionDown()) //si on peut se deplacer vers le bas
 				{
@@ -557,7 +582,10 @@ void Game::loop()
 				lastTime = currentTime;
 			}
 
-			eraseLine();
+			int nb_line = eraseLine();
+			calcul_score(nb_line);
+			levelUp();
+
 			drawBg(0, grid_nbRows_);
 			drawPresMap();
 			drawShape(co);
