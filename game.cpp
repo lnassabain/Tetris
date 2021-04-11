@@ -26,6 +26,8 @@ Game::Game()
 ,	grid_nbColumns_( 0 )
 ,	grid_tileSize_( 0 )
 ,	current_obj( nullptr )
+,	score( 0 )
+,	level( 0 )
 {
 }
 
@@ -340,7 +342,7 @@ Graphics::GraphicsObject* Game::shapeRand(){
 }
 
 /**
- * Check if there are lines to remove and do it.
+ * Check if there are lines to remove and do it. Increases the player score.
  * @return number of erased lines, to calculate the new score
  */
 int Game::eraseLine()
@@ -385,32 +387,55 @@ int Game::eraseLine()
 			// SDL_Delay(1000);
 		}
 	}
-	// On met à jour presenceMap_
-	// Les lignes qui ont été décalées :
-	int& next_erasedL = idx_erasedL.top(); //last element of stack
-	//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
-	idx_erasedL.pop();
-	size_t begin = next_erasedL;
-	for (size_t x = 1 ; x <= nb_complete ; x++) // numero de la ligne pleine en cours
+	if (nb_complete != 0)
 	{
+		// On met à jour presenceMap_
+		// Les lignes qui ont été décalées :
 		int& next_erasedL = idx_erasedL.top(); //last element of stack
 		//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 		idx_erasedL.pop();
-		size_t end = next_erasedL + x ;
-		// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
-		//std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
-		for (size_t l = begin ; l > end ; l--)
+		size_t begin = next_erasedL;
+		for (size_t x = 1 ; x <= nb_complete ; x++) // numero de la ligne pleine en cours
 		{
-			presenceMap_[ l ] = presenceMap_[ l - x ];
-		//	std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
-		//			  << l - x << std::endl;
+			int& next_erasedL = idx_erasedL.top(); //last element of stack
+			//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+			idx_erasedL.pop();
+			size_t end = next_erasedL + x ;
+			// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
+			//std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
+			for (size_t l = begin ; l > end ; l--)
+			{
+				presenceMap_[ l ] = presenceMap_[ l - x ];
+			//	std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
+			//			  << l - x << std::endl;
+			}
+			begin = end;
 		}
-		begin = end;
-	}
-	// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
-	for (int i = 0 ; i < nb_complete ; i ++)
-		presenceMap_[i] = std::vector<bool>( grid_nbColumns_, false );
+		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
+		for (int i = 0 ; i < nb_complete ; i ++)
+			presenceMap_[i] = std::vector<bool>( grid_nbColumns_, false );
 
+		// On augmente le score :
+		switch (nb_complete)
+		{
+			case 1 :
+				score += 40;
+				break;
+			case 2 :
+				score += 100;
+				break;
+			case 3 :
+				score += 300;
+				break;
+			case 4 :
+				score += 1200;
+				break;
+			default :
+				std::cerr << "default case in switch(nb_complete) in eraseLine" << std::endl;
+				exit(1);
+		}
+		std::cout << "New score : " << score << std::endl;
+	}
 	return nb_complete;
 }
 
