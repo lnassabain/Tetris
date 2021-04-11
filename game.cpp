@@ -261,7 +261,6 @@ bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 }
 
 
-
 void Game::keyboard( const std::uint8_t* keys )
 {
 	Graphics::GraphicsObject* co;
@@ -296,7 +295,12 @@ void Game::keyboard( const std::uint8_t* keys )
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
-		//l'objet tombe et touche le fond
+		int l = 0;
+		while (!collisionDown() && l < grid_nbRows_)
+		{
+			l ++;
+			co->setPositionY(y + grid_tileSize_ * l);
+		}
 	}
 	return;
 }
@@ -353,15 +357,15 @@ int Game::eraseLine()
 
 		while (j < line.size() && line[j])
 		{
-			std::cout << "case remplie : " << j << std::endl;
+			//std::cout << "case remplie : " << j << std::endl;
 			j++;
 		}
 
-		std::cout << "derniere case remplie dans la ligne " << i << " : " << j << std::endl;
+		//std::cout << "derniere case remplie dans la ligne " << i << " : " << j << std::endl;
 		if (j == line.size()) //ligne complete de true
 		{
 			int line_idx = i;
-			std::cout << "on push l'indice de la ligne " << line_idx << std::endl;
+		//	std::cout << "on push l'indice de la ligne " << line_idx << std::endl;
 			nb_complete++;
 			idx_erasedL.push(line_idx);
 
@@ -371,11 +375,11 @@ int Game::eraseLine()
 			Sprite above ( window_->getSurface(), 0, 0,
 						   grid_nbColumns_ * grid_tileSize_,
 						   grid_tileSize_ * line_idx );
-			std::cout << "Sprite above : width : " << grid_nbColumns_
-				<< " height : " << line_idx << std::endl;
+		//	std::cout << "Sprite above : width : " << grid_nbColumns_
+		//		<< " height : " << line_idx << std::endl;
 			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
 			window_->draw( above, 0, grid_tileSize_ );
-			std::cout << "On draw above" << std::endl;
+		//	std::cout << "On draw above" << std::endl;
 			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
 			// window_->update();
 			// SDL_Delay(1000);
@@ -384,22 +388,22 @@ int Game::eraseLine()
 	// On met à jour presenceMap_
 	// Les lignes qui ont été décalées :
 	int& next_erasedL = idx_erasedL.top(); //last element of stack
-	std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+	//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 	idx_erasedL.pop();
 	size_t begin = next_erasedL;
 	for (size_t x = 1 ; x <= nb_complete ; x++) // numero de la ligne pleine en cours
 	{
 		int& next_erasedL = idx_erasedL.top(); //last element of stack
-		std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+		//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
 		idx_erasedL.pop();
 		size_t end = next_erasedL + x ;
 		// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
-		std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
+		//std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
 		for (size_t l = begin ; l > end ; l--)
 		{
 			presenceMap_[ l ] = presenceMap_[ l - x ];
-			std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
-					  << l - x << std::endl;
+		//	std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
+		//			  << l - x << std::endl;
 		}
 		begin = end;
 	}
@@ -437,7 +441,7 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 void Game::drawPresMap()
 {
 	int i, j;
-	Sprite* obj_sprite = sprites_[ S_ROUGE];//presence map sera en rouge
+	Sprite* obj_sprite = sprites_[ S_ROUGE ];//presence map sera en rouge
 
 	for (i=0; i<grid_nbRows_; i++)
 	{
@@ -467,8 +471,8 @@ void Game::loop()
 			exit(0);
 		}
 		setCurrObj(co);
-		
-		
+
+
 
 		bool toucheFond = false;
 		bool check_key = false; //un bouton a été appuyé si true
@@ -487,17 +491,17 @@ void Game::loop()
 			// Event management
 			SDL_Event event;
 			while ( !quit && SDL_PollEvent( &event ) )
-			{		
+			{
 				switch ( event.type )
 				{
 					case SDL_QUIT:
 						quit = true;
 						break;
-					
+
 					case SDL_KEYDOWN:
 						check_key= true;
 						break;
-					
+
 				}
 			}
 			//keyboard management
@@ -517,12 +521,12 @@ void Game::loop()
 					y = co -> getPositionY();
 					//on se deplace vers le bas
 					co -> setPositionY(y + grid_tileSize_);
-					std::cout << "La pièce principale descend" << std::endl;
+				//	std::cout << "La pièce principale descend" << std::endl;
 				}
 				else
 				{
 					toucheFond = true;
-					std::cout << "La pièce principale touche le fond" << std::endl;
+				//	std::cout << "La pièce principale touche le fond" << std::endl;
 					// on l'ajoute à la matrice de presence
 				}
 				lastTime = currentTime;
