@@ -34,6 +34,7 @@ public:
 	bool collisionLeft();
 	bool collisionRight();
 	bool collisionDown();
+	bool collisionRotation();
 
 protected:
 	/*Graphics window*/

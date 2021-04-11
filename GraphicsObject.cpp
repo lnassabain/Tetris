@@ -4,7 +4,7 @@
 using namespace Graphics;
 
 // Constructor
-GraphicsObject::GraphicsObject():	x( 0 ),	y( 0 ), c( c_gris ), rotation( 0 )
+GraphicsObject::GraphicsObject():	x( 160 ),	y( 0 ), c( c_gris ), rotation( 0 )
 {
 }
 
