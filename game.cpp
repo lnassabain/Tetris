@@ -300,20 +300,10 @@ void Game::keyboard( const std::uint8_t* keys )
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
-<<<<<<< HEAD
-		int l = 0;
-		while (!collisionDown() && l < grid_nbRows_)
+		while (!collisionDown())
 		{
-			l ++;
-			co->setPositionY(y + grid_tileSize_ * l);
+			co->setPositionY(co->getPositionY()+grid_tileSize_);
 		}
-=======
-		//l'objet tombe et touche le fond
-		/*while (!collisionDown())
-		{
-			co->setPositionY(y+grid_tileSize_);
-		}*/
->>>>>>> 3b76280cd733a3fe43dbba4401e4ae16238da593
 	}
 	return;
 }
