@@ -350,66 +350,52 @@ int Game::eraseLine()
 	std::stack <int> idx_erasedL; //pour la maj de presenceMap_
 	idx_erasedL.push(-1); //pour aller jusqu'en haut dans la maj de presenceMap_
 
-	// parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
+	// Parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
 	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
 	{
 		std::vector< int > line = presenceMap_[i];
 		size_t j = 0;
 
-		while (j < line.size() && line[j]!=0)
-		{
-			//std::cout << "case remplie : " << j << std::endl;
+		// Cherche jusqu'où la ligne est remplie
+		while (j < line.size() && line[j] != 0)
 			j++;
-		}
 
-		//std::cout << "derniere case remplie dans la ligne " << i << " : " << j << std::endl;
-		if (j == line.size()) //ligne complete de true
+		if (j == line.size()) //ligne completement remplie
 		{
-			int line_idx = i;
-		//	std::cout << "on push l'indice de la ligne " << line_idx << std::endl;
 			nb_complete++;
-			idx_erasedL.push(line_idx);
+			idx_erasedL.push(i); // on empile l'indice de la ligne
 
 			/* on prend la surface de tout ce qu'il y a au dessus de cette ligne
 			et on la copie une ligne plus bas
 			+ on reaffiche le fond en haut */
 			Sprite above ( window_->getSurface(), 0, 0,
 						   grid_nbColumns_ * grid_tileSize_,
-						   grid_tileSize_ * line_idx );
-		//	std::cout << "Sprite above : width : " << grid_nbColumns_
-		//		<< " height : " << line_idx << std::endl;
+						   grid_tileSize_ * i );
 			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
 			window_->draw( above, 0, grid_tileSize_ );
-		//	std::cout << "On draw above" << std::endl;
 			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
-			// window_->update();
-			// SDL_Delay(1000);
 		}
 	}
 	if (nb_complete != 0)
-	{
-		// On met à jour presenceMap_
+	{	// On met à jour presenceMap_
 		// Les lignes qui ont été décalées :
-		int& next_erasedL = idx_erasedL.top(); //last element of stack
-		//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+		int& next_erasedL = idx_erasedL.top(); //on dépile la derniere ligne
 		idx_erasedL.pop();
-		size_t begin = next_erasedL;
-		for (size_t x = 1 ; x <= nb_complete ; x++) // numero de la ligne pleine en cours
+
+		size_t begin = next_erasedL; // à partir de la ligne qui a été enlevée
+		for (size_t x = 1 ; x <= nb_complete ; x++) // x = numéro de la ligne complète en cours
 		{
-			int& next_erasedL = idx_erasedL.top(); //last element of stack
-			//std::cout << "prochaine ligne pleine : " << next_erasedL << std::endl;
+			int& next_erasedL = idx_erasedL.top(); // on dépile la ligne d'apres
 			idx_erasedL.pop();
-			size_t end = next_erasedL + x ;
+			size_t end = next_erasedL + x ; //exclue
 			// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
-			//std::cout << "begin : " << begin << " end (exclus) : " << end << std::endl;
 			for (size_t l = begin ; l > end ; l--)
 			{
 				presenceMap_[ l ] = presenceMap_[ l - x ];
-			//	std::cout << "ligne " << l << " de presenceMap_ prend la valeur de la "
-			//			  << l - x << std::endl;
 			}
 			begin = end;
 		}
+		
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
 			presenceMap_[i] = std::vector<int>( grid_nbColumns_, 0 );
