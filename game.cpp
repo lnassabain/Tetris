@@ -18,6 +18,9 @@
 #define S_CYAN 7
 #define S_SHADOW 8
 
+#define X_OFFSET 0
+#define Y_OFFSET 0
+
 
 Game::Game()
 :	window_( nullptr )
@@ -80,9 +83,6 @@ void Game::initialize()
 	for (int i = 0 ; i < 9 ; i++)
 	{
 		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_), 0, grid_tileSize_, grid_tileSize_ ) );
-		// window_->draw(*sprites_[i], 0, i*grid_tileSize_);
-		// window_->update();
-		// SDL_Delay(500);
 	}
 }
 
@@ -368,12 +368,12 @@ int Game::eraseLine()
 			/* on prend la surface de tout ce qu'il y a au dessus de cette ligne
 			et on la copie une ligne plus bas
 			+ on reaffiche le fond en haut */
-			Sprite above ( window_->getSurface(), 0, 0,
+			Sprite above ( window_->getSurface(), X_OFFSET, Y_OFFSET,
 						   grid_nbColumns_ * grid_tileSize_,
 						   grid_tileSize_ * i );
 			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
-			window_->draw( above, 0, grid_tileSize_ );
-			drawBg( 0, 1 ); //une ligne de bg en haut de l'écran
+			window_->draw( above, Y_OFFSET, grid_tileSize_ );
+			drawBg( Y_OFFSET, 1 ); //une ligne de bg en haut de l'écran
 		}
 	}
 	if (nb_complete != 0)
@@ -491,7 +491,8 @@ void Game::drawPresMap()
 
 			if (colID != 0)
 			{
-				window_->draw( *sprites_[colID], j*grid_tileSize_,i*grid_tileSize_);
+				window_->draw( *sprites_[colID], X_OFFSET+j*grid_tileSize_,
+								Y_OFFSET+i*grid_tileSize_);
 			}
 		}
 	}
@@ -597,13 +598,14 @@ void Game::drawShape(Graphics::GraphicsObject* obj)
 		const int x = obj->getPositionX();
 		const int y = obj->getPositionY();
 
-		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y + p.second * grid_tileSize_ );
+		window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
+			 			Y_OFFSET + y + p.second * grid_tileSize_ );
 	}
 }
 
 /**
  * Draw a certain number of lines of background at a certain position.
- * @param y       y coordinate of the upper left angle -> position of the line
+ * @param y       y coordinate of the upper left angle -> position of the line (in the grid ref)
  * @param nbLines number of lines of background we want to draw
  */
 void Game::drawBg(int y, int nbLines)
@@ -611,8 +613,8 @@ void Game::drawBg(int y, int nbLines)
 	Sprite* sfond = sprites_[ S_GRIS ];
 	int height = nbLines * grid_tileSize_;
 
-	for ( int j = y, h = height; j < h; j += sfond->height() ) // y
-		for ( int i = 0, w = window_->width(); i <= w; i += sfond->width() )// x
+	for ( int j = y+Y_OFFSET; j < height; j += sfond->height() ) // y
+		for ( int i = X_OFFSET ; i <= window_->width(); i += sfond->width() )// x
 			window_->draw( *sfond, i, j );
 }
 
@@ -638,101 +640,17 @@ void Game::drawShadow()
 	// On dessine l'ombre en noir
 	Sprite* obj_sprite = sprites_[ S_SHADOW ];
 	for ( const auto& p : shadow.tiles_[ shadow.getRotation() ] ) //tous les carrés
-		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y_new + p.second * grid_tileSize_ );
+		window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
+						Y_OFFSET + y_new + p.second * grid_tileSize_ );
 }
 
 void Game::draw()
 {
-	//std::cout << "On draw : dt = " << dt << std::endl;
 	drawBg(0, grid_nbRows_);
 
-	//Affichage piece courante
 	drawShadow();
 	drawShape(getCurrObj());
 
 	drawPresMap();
 
-
-
-	// Affichage d'une ligne pleine et appel de eraseLine
-/*
-	int lignePleine = 2;
-	presenceMap_[lignePleine] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
-	for (int i = 0 ; i < grid_nbColumns_ ; i++)
-		window_->draw(*sprites_[S_ORANGE], i*grid_tileSize_, lignePleine*grid_tileSize_);
-
-	// Avec plusieurs lignes pleines :
-	int lignePleine2 = 10;
-	presenceMap_[lignePleine2] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
-	for (int i = 0 ; i < grid_nbColumns_ ; i++)
-		window_->draw(*sprites_[S_CYAN], i*grid_tileSize_, lignePleine2*grid_tileSize_);
-
-	int lignePleine3 = 19;
-	presenceMap_[lignePleine3] = std::vector <bool> (grid_nbColumns_, true); //on remplit une ligne
-	for (int i = 0 ; i < grid_nbColumns_ ; i++)
-		window_->draw(*sprites_[S_VIOLET], i*grid_tileSize_, lignePleine3*grid_tileSize_);
-
-
-	// On rajoute des blocs à descendre avec eraseLine
-	window_->draw(*sprites_[S_BLEU], 2*grid_tileSize_, 0);
-	presenceMap_[0][2] = true;
-	window_->draw(*sprites_[S_ROUGE], 6*grid_tileSize_, grid_tileSize_);
-	presenceMap_[1][6] = true;
-	window_->draw(*sprites_[S_JAUNE], 4*grid_tileSize_, 3*grid_tileSize_);
-	presenceMap_[3][4] = true;
-
-
-	SDL_Delay(1000);
-
-	if (dt > 1)
-	{
-		int lignes = eraseLine();
-		std::cout << "ligne.s retirée.s : " << lignes << std::endl;
-
-		for (int i = 0 ; i < presenceMap_.size() ; i++)
-			for (int j = 0 ; j < grid_nbColumns_ ; j++)
-				std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
-	}
-
-	std::cout << "fin de game::draw()" << std::endl;
-*/
-
-
-/* Affichage des 4 rotations d'une pièce
-	{
-        static Graphics::ShapeL* shape_test;
-        static bool is_shape_initialized = false;
-        if ( ! is_shape_initialized )
-        {
-            shape_test = Graphics::ShapeL::create();
-
-            is_shape_initialized = true;
-        }
-
-		for (size_t i = 0 ; i < 4 ; i++)
-		{
-			//int rotationID = i; //Première rotation, change quand le joueur appuie sur la fleche vers le haut
-			//On pourrait mettre rotationID = rot % 4;
-			//rot commence à 0 et à chaque fois que le joueur appuie sur la flèche vers le haut,
-			//on incremente rot :)
-
-			const Graphics::TShape shapeTiles = shape_test->tiles_[ shape_test->getRotation() ]; //current rotation ID;
-			for ( const auto& p : shapeTiles ) //tous les carrés
-			{
-				const int x = shape_test->getPositionX();
-				const int y = shape_test->getPositionY();
-
-
-				const int colorID = shape_test->getColor();
-				Sprite* carre_rouge = sprites_[ colorID ];
-
-
-				window_->draw( *carre_rouge, x + p.first * grid_tileSize_, y + (p.second +i*4)%20 * grid_tileSize_ );
-			}
-
-			shape_test->rotate();
-			// shape_test->move(grid_tileSize_*4, grid_tileSize_*4);
-			// std::cout << shape_test->getPositionX() << std::endl;
-		}
-    }*/
 }
