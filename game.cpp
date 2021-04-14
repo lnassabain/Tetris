@@ -539,8 +539,8 @@ void Game::loop()
 
 		drawBg(0, grid_nbRows_);
 		drawPresMap();
-		drawShape(co);
 		drawShadow();
+		drawShape(co);
 
 		window_->update();
 		SDL_Delay(500);
@@ -599,8 +599,8 @@ void Game::loop()
 
 			drawBg(0, grid_nbRows_);
 			drawPresMap();
-			drawShape(co);
 			drawShadow();
+			drawShape(co);
 			// Update window (refresh)
 			window_->update();
 		}

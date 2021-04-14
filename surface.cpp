@@ -43,7 +43,7 @@ Surface::Surface( const std::string& bmp_file )
 ,	manageSurface_( true )
 {
 	surface_ = SDL_LoadBMP( "./sprites.bmp" );
-	if (SDL_SetColorKey( surface_, SDL_FALSE, 255 ) != 0)
+	if (SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) ) != 0)
 		SDL_GetError();
 	//SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) );
 }
@@ -90,7 +90,7 @@ void Surface::finalize()
 void Surface::load( const std::string& bmp_file )
 {
 	surface_ = SDL_LoadBMP( bmp_file.c_str() );
-	SDL_SetColorKey( surface_, true, 0 ); // 0: 00/00/00 noir -> transparent
+	SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) ); // blanc -> transparent
 }
 
 /******************************************************************************
