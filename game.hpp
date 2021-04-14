@@ -41,7 +41,7 @@ protected:
 	/*Graphics window*/
 	Window* window_;
 
-	void draw( double dt );
+	void draw();
 	void drawShape(Graphics::GraphicsObject* obj); //a voir si ce serait pas drawCurrentObject
 	void drawBg(int y, int nbLines);
 	void drawPresMap();

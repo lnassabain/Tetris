@@ -395,7 +395,7 @@ int Game::eraseLine()
 			}
 			begin = end;
 		}
-		
+
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
 			presenceMap_[i] = std::vector<int>( grid_nbColumns_, 0 );
@@ -523,10 +523,7 @@ void Game::loop()
 		int currentTime;
 		int y;
 
-		drawBg(0, grid_nbRows_);
-		drawPresMap();
-		drawShadow();
-		drawShape(co);
+		draw();
 
 		window_->update();
 		SDL_Delay(500);
@@ -567,12 +564,10 @@ void Game::loop()
 					y = co -> getPositionY();
 					//on se deplace vers le bas
 					co -> setPositionY(y + grid_tileSize_);
-				//	std::cout << "La pièce principale descend" << std::endl;
 				}
 				else
 				{
 					toucheFond = true;
-				//	std::cout << "La pièce principale touche le fond" << std::endl;
 					// on l'ajoute à la matrice de presence
 					addToPresMap(co);
 				}
@@ -583,10 +578,7 @@ void Game::loop()
 			calcul_score(nb_line);
 			levelUp();
 
-			drawBg(0, grid_nbRows_);
-			drawPresMap();
-			drawShadow();
-			drawShape(co);
+			draw();
 			// Update window (refresh)
 			window_->update();
 		}
@@ -649,16 +641,16 @@ void Game::drawShadow()
 		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y_new + p.second * grid_tileSize_ );
 }
 
-void Game::draw( double dt )
+void Game::draw()
 {
 	//std::cout << "On draw : dt = " << dt << std::endl;
 	drawBg(0, grid_nbRows_);
 
 	//Affichage piece courante
-	drawShape(current_obj);
+	drawShadow();
+	drawShape(getCurrObj());
 
 	drawPresMap();
-	drawShadow();
 
 
 
