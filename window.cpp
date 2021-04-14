@@ -40,6 +40,8 @@ void Window::initialize()
 
 	SDL_Surface* surface = SDL_GetWindowSurface( window_ );
 	surface_ = new Surface( surface );
+
+	SDL_SetWindowIcon(window_, SDL_LoadBMP( "./icon.bmp" ));
 }
 
 /*Pour détruire une fenetre*/

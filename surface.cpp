@@ -42,7 +42,7 @@ Surface::Surface( const std::string& bmp_file )
 :	surface_( nullptr )
 ,	manageSurface_( true )
 {
-	surface_ = SDL_LoadBMP( "./sprites.bmp" );
+	surface_ = SDL_LoadBMP( bmp_file.c_str() );
 	if (SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) ) != 0)
 		SDL_GetError();
 	//SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) );
@@ -102,5 +102,3 @@ void Surface::draw( const Sprite& sprite, int x, int y )
 	SDL_BlitSurface( sprite.surface_->surface_, sprite.geometry_,
 				surface_, &dst );
 }
-
-int a = 0xFFA5;
