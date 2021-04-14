@@ -34,7 +34,7 @@ public:
 	bool collisionCreation(Graphics::GraphicsObject* obj); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
 	bool collisionLeft();
 	bool collisionRight();
-	bool collisionDown();
+	bool collisionDown(Graphics::GraphicsObject* obj);
 	bool collisionRotation();
 
 protected:
@@ -45,6 +45,7 @@ protected:
 	void drawShape(Graphics::GraphicsObject* obj); //a voir si ce serait pas drawCurrentObject
 	void drawBg(int y, int nbLines);
 	void drawPresMap();
+	void drawShadow();
     /*Keyboard management*/
 	void keyboard( const std::uint8_t* keys );
 

@@ -16,6 +16,7 @@
 #define S_VIOLET 5
 #define S_ORANGE 6
 #define S_CYAN 7
+#define S_SHADOW 8
 
 
 Game::Game()
@@ -76,11 +77,13 @@ void Game::initialize()
 	const std::string image = "./tetris_sprites.bmp";
 	planche_->load( image.c_str() );
 
-	for (int i = 0 ; i < 8 ; i++)
+	for (int i = 0 ; i < 9 ; i++)
 	{
 		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_), 0, grid_tileSize_, grid_tileSize_ ) );
+		// window_->draw(*sprites_[i], 0, i*grid_tileSize_);
+		// window_->update();
+		// SDL_Delay(500);
 	}
-
 }
 
 void Game::finalize()
@@ -99,7 +102,6 @@ void Game::setCurrObj(Graphics::GraphicsObject* obj){
 
 bool Game::collisionRotation()
 {
-	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int rot = co->getRotation();
@@ -120,21 +122,21 @@ bool Game::collisionRotation()
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
-			isCollision = true;
+			return true;
 		}
 
 		else if (new_x < 0)
 		{
-			isCollision = true;
+			return true;
 		}
 
 		else if (new_x > window_->width()-grid_tileSize_)
 		{
-			isCollision = true;
+			return true;
 		}
 	}
 
-	return isCollision;
+	return false;
 }
 
 
@@ -142,7 +144,6 @@ bool Game::collisionRotation()
 
 bool Game::collisionLeft()
 {
-	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int x = co->getPositionX();
@@ -158,7 +159,7 @@ bool Game::collisionLeft()
 
 		if (new_x < 0) // si le coin gauche du carré est inférieur à 0
 		{
-			isCollision = true;
+			return true;
 		}
 		else
 		{
@@ -166,17 +167,16 @@ bool Game::collisionLeft()
 			placeYinPM = new_y / grid_tileSize_;
 			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
-				isCollision = true;
+				return true;
 			}
 		}
 	}
 
-	return isCollision;
+	return false;
 }
 
 bool Game::collisionRight()
 {
-	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
 	int x = co->getPositionX();
@@ -192,7 +192,7 @@ bool Game::collisionRight()
 
 		if (new_x > window_->width()-grid_tileSize_)
 		{
-			isCollision = true;
+			return true;
 		}
 		else
 		{
@@ -200,27 +200,26 @@ bool Game::collisionRight()
 			placeYinPM = new_y / grid_tileSize_;
 			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
-				isCollision = true;
+				return true;
 			}
 		}
 	}
 
-	return isCollision;
+	return false;
 }
 
-bool Game::collisionDown()
+bool Game::collisionDown(Graphics::GraphicsObject* obj)
 {
 	int new_x;
 	int new_y;
 	int placeXinPM; //place du carré dans le PresenceMap, coord. x
 	int placeYinPM; //place du carré dans le PresenceMap, coord. y
-	bool isCollision = false;
 	Graphics::GraphicsObject* co;
 	co = getCurrObj();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 
-	const Graphics::TShape shapeTiles = co->tiles_[co->getRotation()];
+	const Graphics::TShape shapeTiles = obj->tiles_[co->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
 		new_x = x + p.first * grid_tileSize_;
@@ -231,17 +230,16 @@ bool Game::collisionDown()
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
-			isCollision = true;
+			return true;
 		}
 	}
 
-	return isCollision;
+	return false;
 }
 
 
 bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 {
-	bool isCollision = false;
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 	int new_x, new_y;
@@ -258,11 +256,11 @@ bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
-			isCollision = true;
+			return true;
 		}
 	}
 
-	return isCollision;
+	return false;
 }
 
 
@@ -294,13 +292,13 @@ void Game::keyboard( const std::uint8_t* keys )
 	}
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		if (!collisionDown()) //test si possible de se deplacer vers le bas
+		if (!collisionDown(co)) //test si possible de se deplacer vers le bas
 		{
 			co -> setPositionY(y+grid_tileSize_);
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
-		while (!collisionDown())
+		while (!collisionDown(co))
 		{
 			co->setPositionY(co->getPositionY()+grid_tileSize_);
 		}
@@ -542,6 +540,8 @@ void Game::loop()
 		drawBg(0, grid_nbRows_);
 		drawPresMap();
 		drawShape(co);
+		drawShadow();
+
 		window_->update();
 		SDL_Delay(500);
 
@@ -576,7 +576,7 @@ void Game::loop()
 			currentTime = SDL_GetTicks();
 			if (currentTime > lastTime + speed)
 			{
-				if (!collisionDown()) //si on peut se deplacer vers le bas
+				if (!collisionDown(co)) //si on peut se deplacer vers le bas
 				{
 					y = co -> getPositionY();
 					//on se deplace vers le bas
@@ -600,6 +600,7 @@ void Game::loop()
 			drawBg(0, grid_nbRows_);
 			drawPresMap();
 			drawShape(co);
+			drawShadow();
 			// Update window (refresh)
 			window_->update();
 		}
@@ -610,12 +611,13 @@ void Game::loop()
 
 void Game::drawShape(Graphics::GraphicsObject* obj)
 {
+	const int colorID = obj->getColor();
+	Sprite* obj_sprite = sprites_[ colorID ];
+
 	for ( const auto& p : obj->tiles_[ obj->getRotation() ] ) //tous les carrés
 	{
 		const int x = obj->getPositionX();
 		const int y = obj->getPositionY();
-		const int colorID = obj->getColor();
-		Sprite* obj_sprite = sprites_[ colorID ];
 
 		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y + p.second * grid_tileSize_ );
 	}
@@ -636,6 +638,31 @@ void Game::drawBg(int y, int nbLines)
 			window_->draw( *sfond, i, j );
 }
 
+/**
+ * Draws the shadow of the current piece on the floor
+ */
+void Game::drawShadow()
+{
+	// On cherche où serait la pièce au sol ; code de SPACE
+	Graphics::GraphicsObject* co =getCurrObj();
+	int x = co->getPositionX();
+	int y = co->getPositionY();
+
+	Graphics::GraphicsObject shadow = *co; //copie ??
+
+	int y_new = y;
+	while (!collisionDown(&shadow))
+	{
+		y_new += grid_tileSize_;
+		shadow.setPositionY(y_new);
+	}
+
+	// On dessine l'ombre en noir
+	Sprite* obj_sprite = sprites_[ S_SHADOW ];
+	for ( const auto& p : shadow.tiles_[ shadow.getRotation() ] ) //tous les carrés
+		window_->draw( *obj_sprite, x + p.first * grid_tileSize_, y_new + p.second * grid_tileSize_ );
+}
+
 void Game::draw( double dt )
 {
 	//std::cout << "On draw : dt = " << dt << std::endl;
@@ -643,8 +670,9 @@ void Game::draw( double dt )
 
 	//Affichage piece courante
 	drawShape(current_obj);
-	//SDL_Delay(500);
 
+	drawPresMap();
+	drawShadow();
 
 
 

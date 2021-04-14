@@ -43,7 +43,9 @@ Surface::Surface( const std::string& bmp_file )
 ,	manageSurface_( true )
 {
 	surface_ = SDL_LoadBMP( "./sprites.bmp" );
-	SDL_SetColorKey( surface_, true, 0 );
+	if (SDL_SetColorKey( surface_, SDL_FALSE, 255 ) != 0)
+		SDL_GetError();
+	//SDL_SetColorKey( surface_, true, SDL_MapRGB(surface_->format, 255, 255, 255) );
 }
 
 /******************************************************************************
