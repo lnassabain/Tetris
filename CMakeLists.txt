@@ -28,9 +28,7 @@ endfunction()
 
 #ADD_PRG(TARGET TP_SDL SOURCES base_tp1.cpp)
 
-ADD_PRG(TARGET tetris SOURCES coordonate.cpp coordonate.hpp
-		game.cpp game.hpp GraphicsObject.cpp GraphicsObject.h window.cpp window.h
-		window.inl sprite.cpp sprite.h surface.cpp surface.h GameCore.cpp GameCore.h main.cpp)
+ADD_PRG(TARGET tetris SOURCES game.cpp game.hpp GraphicsObject.cpp GraphicsObject.h window.cpp 			window.h window.inl sprite.cpp sprite.h surface.cpp surface.h GameCore.cpp GameCore.h 			main.cpp)
 
 
 
