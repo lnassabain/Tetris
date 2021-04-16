@@ -208,7 +208,7 @@ void SceneManager::displayWord(int x, int y, Word word)
 }
 
 
-void SceneManager::displayMenu()
+void SceneManager::displayMenu(int mode)
 {
     // title
     SDL_Surface* win_surf = window_->getSurface()->getSurface();
@@ -217,14 +217,33 @@ void SceneManager::displayMenu()
     window_->draw(*sprites_[S_ICON], x, 0);
 
     // marathon
-    Word marathon = {13, 1, 18, 1, 20, 8, 15, 14};
-    x = window_->width() / 2 - sprites_[S_LETTER]->width() * marathon.size() / 2;
-    displayWord(x, 350, marathon);
+    Word marathon = { 13, 1, 18, 1, 20, 8, 15, 14 };
+    int w_ma = sprites_[S_LETTER]->width() * marathon.size();
+    int x_ma = window_->width() / 2 - w_ma / 2;
 
     // vs cpu
-    Word vs_cpu = {22, 19, -1, 3, 16, 21};
-    x = window_->width() / 2 - sprites_[S_LETTER]->width() * vs_cpu.size() / 2;
-    displayWord(x, 450, vs_cpu);
+    Word vs_cpu = { 22, 19, -1, 3, 16, 21 };
+    int w_vs = sprites_[S_LETTER]->width() * vs_cpu.size();
+    int x_vs = window_->width() / 2 - w_vs / 2;
+
+    // quit
+    Word quit = { 17, 21, 9, 20 };
+    int w_qu = sprites_[S_LETTER]->width() * quit.size();
+    int x_qu = window_->width() / 2 - w_qu / 2;
+
+    // selected mode -> filled rectangle
+    int x_rect [] = { x_ma, x_vs, x_qu };
+    int w_rect [] = { w_ma, w_vs, w_qu };
+    int border = 5;
+    const SDL_Rect mode_rect = { x_rect[mode]-5, 350 + mode*100 - 5,
+                                 w_rect[mode]+10, 50+10 };
+    SDL_FillRect(win_surf, &mode_rect,
+                 SDL_MapRGB(win_surf->format, 242, 132, 245));
+
+
+    displayWord(x_ma, 350, marathon);
+    displayWord(x_vs, 450, vs_cpu);
+    displayWord(x_qu, 550, quit);
 
     window_->update();
 }

@@ -50,7 +50,7 @@ public:
     void drawEraseLine(int line);
 
     void displayWord(int x, int y, Word word);
-    void displayMenu();
+    void displayMenu(int mode);
     void display_1p();
     void displayFigure(int figure, int x, int y);
 

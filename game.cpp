@@ -555,7 +555,7 @@ void Game::draw()
 
 void Game::menu()
 {
-	manager_->displayMenu();
+	manager_->displayMenu(0);
 
 	SDL_Delay(5000);
 
