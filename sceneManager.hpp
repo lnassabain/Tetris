@@ -33,7 +33,7 @@ using Word = std::vector< int >; // index of each letter of word in alphabet (-1
 class SceneManager
 {
 public:
-    SceneManager();
+    SceneManager(bool multiplayer);
     ~SceneManager();
 
     const int get_nbRows() const;

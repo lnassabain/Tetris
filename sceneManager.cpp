@@ -1,18 +1,29 @@
 #include "sceneManager.hpp"
 #include <iostream>
 
-SceneManager::SceneManager()
+SceneManager::SceneManager(bool multiplayer)
 :	window_( nullptr )
 ,	sprites_(  )
 ,	grid_nbRows_( 20 )
 ,	grid_nbColumns_( 10 )
 ,	grid_tileSize_( 32 )
 {
-    const int windowWidth = grid_nbColumns_ * grid_tileSize_ + 235;
-    const int windowHeight = grid_nbRows_ * grid_tileSize_;
-    const std::string windowTitle = "TETRIS";
-    window_ = new Window( windowTitle, windowWidth, windowHeight );
-    window_->initialize();
+    if (!multiplayer) //si c'est singleplayer
+    {
+        const int windowWidth = grid_nbColumns_ * grid_tileSize_ + 235;
+        const int windowHeight = grid_nbRows_ * grid_tileSize_;
+        const std::string windowTitle = "TETRIS";
+        window_ = new Window( windowTitle, windowWidth, windowHeight );
+        window_->initialize();
+    }
+    else
+    {
+        const int windowWidth = grid_nbColumns_ * grid_tileSize_ + 235 + grid_nbColumns_ * grid_tileSize_;
+        const int windowHeight = grid_nbRows_ * grid_tileSize_;
+        const std::string windowTitle = "TETRIS";
+        window_ = new Window(windowTitle, windowWidth, windowHeight);
+        window_->initialize();
+    }
 
     // Squares of color for each piece
     Surface* carre_surf = new Surface ("./tetris_sprites.bmp");

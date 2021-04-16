@@ -16,6 +16,7 @@ Game::Game()
 ,	level( 1 )
 ,	tot_line( 0 )
 , 	speed( 1000 )
+,   multiplayer(false)
 {
 }
 
@@ -26,8 +27,7 @@ Game::~Game()
 
 void Game::initialize()
 {
-	manager_ = new SceneManager();
-
+	manager_ = new SceneManager(multiplayer);
     /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet
     arrete de bouger (touche le fond), on met la matrice à cette zone à true.
     De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
