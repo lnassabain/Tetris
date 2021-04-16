@@ -204,6 +204,8 @@ void SceneManager::displayFigure(int figure, int x, int y)
         dizaine = figure / 10;
         unite = figure % 10;
     }
+    else
+        unite = figure;
 
     window_->draw(*sprites_[S_FIG + millier], x-32*2, y);
     window_->draw(*sprites_[S_FIG + centaine], x-32, y);
