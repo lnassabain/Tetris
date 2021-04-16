@@ -18,6 +18,13 @@
 #define X_OFFSET 0
 #define Y_OFFSET 0
 
+//Pour la deuxieme fenetre quand on joue en multi
+//#define X2_OFFSET ?
+//#define Y2_OFFSET ?
+/*Pour toutes les fonction draw, il faudrait rajouter un paremetre "int scene", 
+si scene == 1 alors on dessine sur la premiere fenetre (on utlise X2, Y2_OFFSET), 
+si scene == 2 alors on dessine sur le deuxième fenetre (on utilise X, Y_OFFSET)*/
+
 class SceneManager
 {
 public:

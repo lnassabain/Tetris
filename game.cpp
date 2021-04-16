@@ -171,12 +171,10 @@ bool Game::collisionDown(Graphics::GraphicsObject* obj)
 	int new_y;
 	int placeXinPM; //place du carré dans le PresenceMap, coord. x
 	int placeYinPM; //place du carré dans le PresenceMap, coord. y
-	Graphics::GraphicsObject* co;
-	co = getCurrObj();
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 
-	const Graphics::TShape shapeTiles = obj->tiles_[co->getRotation()];
+	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
 		new_x = x + p.first * manager_->get_tileSize();
