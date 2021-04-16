@@ -513,6 +513,7 @@ void Game::loop()
 	SDL_Quit();
 }
 
+
 /**
  * Draws the shadow of the current piece on the floor
  */
@@ -539,12 +540,13 @@ void Game::drawShadow()
 
 void Game::draw()
 {
+	// La grille
 	manager_->drawBg(0, manager_->get_nbRows());
-
-	//drawShadow();
+	drawShadow();
 	manager_->drawShape(getCurrObj());
-
 	manager_->drawPresMap(presenceMap_);
+
+	manager_->display_1p();
 
 	manager_->update();
 }

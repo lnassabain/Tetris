@@ -8,7 +8,7 @@ SceneManager::SceneManager()
 ,	grid_nbColumns_( 10 )
 ,	grid_tileSize_( 32 )
 {
-    const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
+    const int windowWidth = grid_nbColumns_ * grid_tileSize_ + 235;
     const int windowHeight = grid_nbRows_ * grid_tileSize_;
     const std::string windowTitle = "TETRIS";
     window_ = new Window( windowTitle, windowWidth, windowHeight );
@@ -26,12 +26,6 @@ SceneManager::SceneManager()
     SDL_SetColorKey( score_surf->getSurface(), true, SDL_MapRGB(score_surf->getSurface()->format, 30, 43, 128) );
     sprites_.emplace_back( new Sprite(score_surf, 5, 0, 192, 50) ); //score
     sprites_.emplace_back( new Sprite(score_surf, 5, 100, 196, 50) ); //level
-    window_->draw(*sprites_[S_SCORE], 0, 0);
-    window_->draw(*sprites_[S_LEVEL], 0, 100);
-
-    window_->update();
-    SDL_Delay(500);
-
 }
 SceneManager::~SceneManager()
 {
@@ -68,7 +62,7 @@ const int SceneManager::get_windowHeight() const {
     return window_->height();
 }
 
-//////////////// DRAWER ////////////////
+//////////////// DRAWER FOR THE PLAYGRID ////////////////
 
 void SceneManager::drawPresMap(std::vector< std::vector< int > > presenceMap_)
 {
@@ -149,10 +143,21 @@ void SceneManager::drawEraseLine(int line)
     Sprite above ( window_->getSurface(), X_OFFSET, Y_OFFSET,
                    grid_nbColumns_ * grid_tileSize_,
                    grid_tileSize_ * line);
-    // On décale cette sprite d'une ligne vers le bas : y = manager_->get_tileSize()
-    window_->draw( above, Y_OFFSET, grid_tileSize_ );
+    // On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
+    window_->draw( above, X_OFFSET, grid_tileSize_ );
     drawBg( Y_OFFSET, 1 ); //une ligne de bg en haut de l'écran
 }
+
+//////////////// STATS DISPLAY ////////////////
+
+void SceneManager::display_1p()
+{
+    window_->draw(*sprites_[S_SCORE], 330, 15);
+    window_->draw(*sprites_[S_LEVEL], 330, 15+80+50);
+}
+
+
+//////////////// UTILS ////////////////
 
 void SceneManager::update()
 {

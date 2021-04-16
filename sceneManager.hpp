@@ -35,6 +35,9 @@ public:
 	void drawPresMap(std::vector< std::vector< int > > presenceMap_);
     void drawShadow(Graphics::GraphicsObject& shadow);
     void drawEraseLine(int line);
+
+    void display_1p();
+
     void update();
 
 
