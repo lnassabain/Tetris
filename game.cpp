@@ -564,8 +564,9 @@ void Game::menu()
 				if (key[SDL_SCANCODE_UP])
 				{
 					if (mode == 0)
-						mode = 3;
-					mode --;
+						mode = 2;
+					else
+						mode --;
 				}
 				if (key[SDL_SCANCODE_RETURN])
 				{
@@ -587,7 +588,6 @@ void Game::menu()
 				manager_->displayMenu(mode);
 
 			//	quit |= key[ SDL_SCANCODE_ESCAPE ];
-				//SDL_Delay(100);
 				break;
 
 		}
