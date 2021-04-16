@@ -102,3 +102,9 @@ void Surface::draw( const Sprite& sprite, int x, int y )
 	SDL_BlitSurface( sprite.surface_->surface_, sprite.geometry_,
 				surface_, &dst );
 }
+
+
+SDL_Surface* Surface::getSurface()
+{
+	return surface_;
+}

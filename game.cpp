@@ -8,28 +8,10 @@
 #include "game.hpp"
 #include "GraphicsObject.h"
 
-#define S_GRIS 0
-#define S_ROUGE 1
-#define S_JAUNE 2
-#define S_VERT 3
-#define S_BLEU 4
-#define S_VIOLET 5
-#define S_ORANGE 6
-#define S_CYAN 7
-#define S_SHADOW 8
-
-#define X_OFFSET 0
-#define Y_OFFSET 0
-
 
 Game::Game()
-:	window_( nullptr )
-,	planche_( nullptr )
-,	sprites_()
+:	manager_( nullptr )
 ,	presenceMap_()
-,	grid_nbRows_( 0 )
-,	grid_nbColumns_( 0 )
-,	grid_tileSize_( 0 )
 ,	current_obj( nullptr )
 ,	score( 0 )
 ,	level( 1 )
@@ -40,55 +22,30 @@ Game::Game()
 
 Game::~Game()
 {
-	for ( auto sprite : sprites_ )
-	{
-		delete sprite;
-		sprite = nullptr;
-	}
-	sprites_.clear();
 
-	delete planche_;
-	planche_ = nullptr;
-
-	delete window_;
-	window_ = nullptr;
 }
 
 void Game::initialize()
 {
-    grid_nbRows_ = 20;
-	grid_nbColumns_ = 10;
-	grid_tileSize_ = 32;
+	manager_ = new SceneManager();
+
     /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet
     arrete de bouger (touche le fond), on met la matrice à cette zone à true.
     De la même maniere, lorsqu'on deplace un objet, s'il touche une zone qui
     est a true, il y a collision*/
-    presenceMap_.resize( grid_nbRows_, std::vector< int >( grid_nbColumns_, 0 ) );
-	presenceMap_.push_back( std::vector< int >( grid_nbColumns_, 1 ) ); //le sol
+    presenceMap_.resize( manager_->get_nbRows(),
+						 std::vector< int >( manager_->get_nbCol(), 0 ) );
+	presenceMap_.push_back( std::vector< int >( manager_->get_nbCol(), 1 ) ); //le sol
 	// for (int i = 0 ; i < presenceMap_.size() ; i++)
-	// 	for (int j = 0 ; j < grid_nbColumns_ ; j++)
+	// 	for (int j = 0 ; j < manager_->get_nbCol() ; j++)
 	// 		std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
 
-    const int windowWidth = grid_nbColumns_ * grid_tileSize_ ;
-	const int windowHeight = grid_nbRows_ * grid_tileSize_;
-	const std::string windowTitle = "TETRIS";
-	window_ = new Window( windowTitle, windowWidth, windowHeight );
-	window_->initialize();
-
-
-    planche_ = new Surface();
-	const std::string image = "./tetris_sprites.bmp";
-	planche_->load( image.c_str() );
-
-	for (int i = 0 ; i < 9 ; i++)
-	{
-		sprites_.emplace_back( new Sprite( planche_, i*(grid_tileSize_), 0, grid_tileSize_, grid_tileSize_ ) );
-	}
 }
 
 void Game::finalize()
 {
-
+	delete manager_;
+	manager_ = nullptr;
 }
 
 Graphics::GraphicsObject* Game::getCurrObj(){
@@ -114,11 +71,11 @@ bool Game::collisionRotation()
 	const Graphics::TShape shapeTiles = co->tiles_[(rot+1) % 4]; //la prochaine rotation
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * grid_tileSize_;
-		new_y = y + p.second * grid_tileSize_;
+		new_x = x + p.first * manager_->get_tileSize();
+		new_y = y + p.second * manager_->get_tileSize();
 
-		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
-		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
+		placeXinPM = new_x / manager_->get_tileSize(); //On obtient l'indice x dans PresenceMap
+		placeYinPM = new_y / manager_->get_tileSize(); //On obtient l'indice y dans PresenceMap
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
@@ -130,7 +87,7 @@ bool Game::collisionRotation()
 			return true;
 		}
 
-		else if (new_x > window_->width()-grid_tileSize_)
+		else if (new_x > manager_->get_windowWidth() - manager_->get_tileSize())
 		{
 			return true;
 		}
@@ -154,8 +111,8 @@ bool Game::collisionLeft()
 	const Graphics::TShape shapeTiles = co->tiles_[ co->getRotation() ]; //current rotation ID;
 	for ( const auto& p : shapeTiles ) //tous les carrés
 	{
-		new_x = x + (p.first-1) * grid_tileSize_;
-		new_y = y + (p.second) * grid_tileSize_;
+		new_x = x + (p.first-1) * manager_->get_tileSize();
+		new_y = y + (p.second) * manager_->get_tileSize();
 
 		if (new_x < 0) // si le coin gauche du carré est inférieur à 0
 		{
@@ -163,8 +120,8 @@ bool Game::collisionLeft()
 		}
 		else
 		{
-			placeXinPM = new_x / grid_tileSize_;
-			placeYinPM = new_y / grid_tileSize_;
+			placeXinPM = new_x / manager_->get_tileSize();
+			placeYinPM = new_y / manager_->get_tileSize();
 			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
 				return true;
@@ -187,17 +144,17 @@ bool Game::collisionRight()
 	const Graphics::TShape shapeTiles = co->tiles_[co->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + (p.first+1) * grid_tileSize_;
-		new_y = y + (p.second) * grid_tileSize_;
+		new_x = x + (p.first+1) * manager_->get_tileSize();
+		new_y = y + (p.second) * manager_->get_tileSize();
 
-		if (new_x > window_->width()-grid_tileSize_)
+		if (new_x > manager_->get_windowWidth() - manager_->get_tileSize())
 		{
 			return true;
 		}
 		else
 		{
-			placeXinPM = new_x / grid_tileSize_;
-			placeYinPM = new_y / grid_tileSize_;
+			placeXinPM = new_x / manager_->get_tileSize();
+			placeYinPM = new_y / manager_->get_tileSize();
 			if (presenceMap_[placeYinPM][placeXinPM] != 0)
 			{
 				return true;
@@ -222,11 +179,11 @@ bool Game::collisionDown(Graphics::GraphicsObject* obj)
 	const Graphics::TShape shapeTiles = obj->tiles_[co->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * grid_tileSize_;
-		new_y = y + (p.second+1)*grid_tileSize_;
+		new_x = x + p.first * manager_->get_tileSize();
+		new_y = y + (p.second+1)*manager_->get_tileSize();
 
-		placeXinPM = new_x / grid_tileSize_; //On obtient l'indice x dans PresenceMap
-		placeYinPM = new_y / grid_tileSize_; //On obtient l'indice y dans PresenceMap
+		placeXinPM = new_x / manager_->get_tileSize(); //On obtient l'indice x dans PresenceMap
+		placeYinPM = new_y / manager_->get_tileSize(); //On obtient l'indice y dans PresenceMap
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
@@ -248,11 +205,11 @@ bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * grid_tileSize_;
-		new_y = y + p.second * grid_tileSize_;
+		new_x = x + p.first * manager_->get_tileSize();
+		new_y = y + p.second * manager_->get_tileSize();
 
-		placeXinPM = new_x / grid_tileSize_;
-		placeYinPM = new_y / grid_tileSize_;
+		placeXinPM = new_x / manager_->get_tileSize();
+		placeYinPM = new_y / manager_->get_tileSize();
 
 		if (presenceMap_[placeYinPM][placeXinPM] != 0)
 		{
@@ -280,27 +237,27 @@ void Game::keyboard( const std::uint8_t* keys )
 	{
 		if (!collisionLeft()) //test si possible de se deplacer vers la gauche
 		{
-			co -> setPositionX(x-grid_tileSize_);
+			co -> setPositionX(x-manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_RIGHT])
 	{
 		if (!collisionRight()) //test si possible de se deplacer vers la droite
 		{
-			co -> setPositionX(x+grid_tileSize_);
+			co -> setPositionX(x+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_DOWN])
 	{
 		if (!collisionDown(co)) //test si possible de se deplacer vers le bas
 		{
-			co -> setPositionY(y+grid_tileSize_);
+			co -> setPositionY(y+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
 		while (!collisionDown(co))
 		{
-			co->setPositionY(co->getPositionY()+grid_tileSize_);
+			co->setPositionY(co->getPositionY()+manager_->get_tileSize());
 		}
 	}
 	return;
@@ -365,15 +322,7 @@ int Game::eraseLine()
 			nb_complete++;
 			idx_erasedL.push(i); // on empile l'indice de la ligne
 
-			/* on prend la surface de tout ce qu'il y a au dessus de cette ligne
-			et on la copie une ligne plus bas
-			+ on reaffiche le fond en haut */
-			Sprite above ( window_->getSurface(), X_OFFSET, Y_OFFSET,
-						   grid_nbColumns_ * grid_tileSize_,
-						   grid_tileSize_ * i );
-			// On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
-			window_->draw( above, Y_OFFSET, grid_tileSize_ );
-			drawBg( Y_OFFSET, 1 ); //une ligne de bg en haut de l'écran
+			manager_->drawEraseLine(i);
 		}
 	}
 	if (nb_complete != 0)
@@ -398,7 +347,7 @@ int Game::eraseLine()
 
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
-			presenceMap_[i] = std::vector<int>( grid_nbColumns_, 0 );
+			presenceMap_[i] = std::vector<int>( manager_->get_nbCol(), 0 );
 	}
 	return nb_complete;
 }
@@ -466,11 +415,11 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 
 	for (const auto& p : obj->tiles_[ obj->getRotation() ] )
 	{
-		carre_x = x + p.first*grid_tileSize_;
-		carre_y = y + p.second*grid_tileSize_;
+		carre_x = x + p.first*manager_->get_tileSize();
+		carre_y = y + p.second*manager_->get_tileSize();
 
-		placeXinPM = carre_x / grid_tileSize_;
-		placeYinPM = carre_y / grid_tileSize_;
+		placeXinPM = carre_x / manager_->get_tileSize();
+		placeYinPM = carre_y / manager_->get_tileSize();
 
 		presenceMap_[placeYinPM][placeXinPM] = colID;
 	}
@@ -478,27 +427,6 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 	return;
 }
 
-void Game::drawPresMap()
-{
-	int i, j;
-	int colID;
-
-	for (i=0; i<grid_nbRows_; i++)
-	{
-		for (j=0; j<grid_nbColumns_; j++)
-		{
-			colID = presenceMap_[i][j];
-
-			if (colID != 0)
-			{
-				window_->draw( *sprites_[colID], X_OFFSET+j*grid_tileSize_,
-								Y_OFFSET+i*grid_tileSize_);
-			}
-		}
-	}
-
-	return;
-}
 
 void Game::loop()
 {
@@ -526,7 +454,6 @@ void Game::loop()
 
 		draw();
 
-		window_->update();
 		SDL_Delay(500);
 
 		while (!quit && !toucheFond)
@@ -564,7 +491,7 @@ void Game::loop()
 				{
 					y = co -> getPositionY();
 					//on se deplace vers le bas
-					co -> setPositionY(y + grid_tileSize_);
+					co -> setPositionY(y + manager_->get_tileSize());
 				}
 				else
 				{
@@ -580,42 +507,10 @@ void Game::loop()
 			levelUp();
 
 			draw();
-			// Update window (refresh)
-			window_->update();
 		}
 
 	}
 	SDL_Quit();
-}
-
-void Game::drawShape(Graphics::GraphicsObject* obj)
-{
-	const int colorID = obj->getColor();
-	Sprite* obj_sprite = sprites_[ colorID ];
-
-	for ( const auto& p : obj->tiles_[ obj->getRotation() ] ) //tous les carrés
-	{
-		const int x = obj->getPositionX();
-		const int y = obj->getPositionY();
-
-		window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
-			 			Y_OFFSET + y + p.second * grid_tileSize_ );
-	}
-}
-
-/**
- * Draw a certain number of lines of background at a certain position.
- * @param y       y coordinate of the upper left angle -> position of the line (in the grid ref)
- * @param nbLines number of lines of background we want to draw
- */
-void Game::drawBg(int y, int nbLines)
-{
-	Sprite* sfond = sprites_[ S_GRIS ];
-	int height = nbLines * grid_tileSize_;
-
-	for ( int j = y+Y_OFFSET; j < height; j += sfond->height() ) // y
-		for ( int i = X_OFFSET ; i <= window_->width(); i += sfond->width() )// x
-			window_->draw( *sfond, i, j );
 }
 
 /**
@@ -624,33 +519,33 @@ void Game::drawBg(int y, int nbLines)
 void Game::drawShadow()
 {
 	// On cherche où serait la pièce au sol ; code de SPACE
-	Graphics::GraphicsObject* co =getCurrObj();
+	Graphics::GraphicsObject* co = getCurrObj();
 	int x = co->getPositionX();
 	int y = co->getPositionY();
 
-	Graphics::GraphicsObject shadow = *co; //copie ??
+	Graphics::GraphicsObject shadow = *co; //copie
 
 	int y_new = y;
 	while (!collisionDown(&shadow))
 	{
-		y_new += grid_tileSize_;
+		y_new += manager_->get_tileSize();
 		shadow.setPositionY(y_new);
 	}
 
-	// On dessine l'ombre en noir
-	Sprite* obj_sprite = sprites_[ S_SHADOW ];
-	for ( const auto& p : shadow.tiles_[ shadow.getRotation() ] ) //tous les carrés
-		window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
-						Y_OFFSET + y_new + p.second * grid_tileSize_ );
+	manager_->drawShadow(shadow);
 }
+
+
 
 void Game::draw()
 {
-	drawBg(0, grid_nbRows_);
+	std::cout << "draw game" << std::endl;
+	manager_->drawBg(0, manager_->get_nbRows());
 
-	drawShadow();
-	drawShape(getCurrObj());
+	//drawShadow();
+	manager_->drawShape(getCurrObj());
 
-	drawPresMap();
+	manager_->drawPresMap(presenceMap_);
 
+	manager_->update();
 }

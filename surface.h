@@ -66,6 +66,8 @@ public:
 
 	void draw( const Sprite& sprite, int x, int y );
 
+	SDL_Surface* getSurface();
+
 
 	/**************************************************************************
 	 **************************** PROTECTED SECTION ***************************
