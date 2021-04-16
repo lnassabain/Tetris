@@ -538,10 +538,64 @@ void Game::draw(Graphics::GraphicsObject* obj)
 
 void Game::menu()
 {
-	manager_->displayMenu(0);
+	int mode = 0 ;
+	manager_->displayMenu(mode);
 
-	SDL_Delay(5000);
+	bool quit = false;
+	SDL_Event event;
+	while ( !quit )
+	{
+		SDL_PollEvent( &event );
+		//std::cout << "boucle while, event type = " << event.type << std::endl;
+
+		switch ( event.type )
+		{
+			case SDL_QUIT:
+				quit = true;
+				break;
+
+			case SDL_KEYDOWN:
+				const Uint8* key = SDL_GetKeyboardState(NULL);
+				if (key[SDL_SCANCODE_DOWN])
+				{
+					mode ++;
+					mode %= 3;
+				}
+				if (key[SDL_SCANCODE_UP])
+				{
+					if (mode == 0)
+						mode = 3;
+					mode --;
+				}
+				if (key[SDL_SCANCODE_RETURN])
+				{
+					if (mode == 0)
+					{
+						multiplayer = false;
+						loop();
+					}
+					else if (mode == 1)
+					{
+						multiplayer = true;
+					}
+					else
+					{
+						quit = true;
+					}
+				}
+
+				manager_->displayMenu(mode);
+
+			//	quit |= key[ SDL_SCANCODE_ESCAPE ];
+				//SDL_Delay(100);
+				break;
+
+		}
+		SDL_Delay(100);
+	}
 
 
-	loop(); //lance le jeu
+
+
+	//loop(); //lance le jeu
 }
