@@ -120,10 +120,28 @@ const int SceneManager::get_windowHeight() const {
 
 //////////////// DRAWER FOR THE PLAYGRID ////////////////
 
-void SceneManager::drawPresMap(std::vector< std::vector< int > > presenceMap_)
+void SceneManager::drawPresMap(std::vector< std::vector< int > > presenceMap_, int scene_id)
 {
 	int i, j;
 	int colID;
+    int x_offset, y_offset;
+
+    switch (scene_id)
+    {
+        case 1:
+            x_offset = X_OFFSET;
+            y_offset = Y_OFFSET;
+            break;
+        case 2:
+            x_offset = X2_OFFSET;
+            y_offset = Y2_OFFSET;
+            break;
+        default:
+            std::cerr << "Numero de grid non valide" << std::endl;
+            exit(1);
+            break;
+    }
+
 
 	for (i=0; i < grid_nbRows_; i++)
 	{
@@ -133,8 +151,8 @@ void SceneManager::drawPresMap(std::vector< std::vector< int > > presenceMap_)
 
 			if (colID != 0)
 			{
-				window_->draw( *sprites_[colID], X_OFFSET+j*grid_tileSize_,
-								Y_OFFSET+i*grid_tileSize_);
+				window_->draw( *sprites_[colID], x_offset+j*grid_tileSize_,
+								y_offset+i*grid_tileSize_);
 			}
 		}
 	}
@@ -143,18 +161,34 @@ void SceneManager::drawPresMap(std::vector< std::vector< int > > presenceMap_)
 }
 
 
-void SceneManager::drawShape(Graphics::GraphicsObject* obj)
+void SceneManager::drawShape(Graphics::GraphicsObject* obj, int scene_id)
 {
 	const int colorID = obj->getColor();
 	Sprite* obj_sprite = sprites_[ colorID ];
+    int x_offset, y_offset;
+    switch(scene_id)
+    {
+        case 1:
+            x_offset = X_OFFSET;
+            y_offset = Y_OFFSET;
+            break;
+        case 2:
+            x_offset = X2_OFFSET;
+            y_offset = Y2_OFFSET;
+            break;
+        default:
+            std::cerr << "Numero de grid non valide" << std::endl;
+            exit(1);
+            break;
+    }
 
 	for ( const auto& p : obj->tiles_[ obj->getRotation() ] ) //tous les carrés
 	{
 		const int x = obj->getPositionX();
 		const int y = obj->getPositionY();
 
-		window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
-			 			Y_OFFSET + y + p.second * grid_tileSize_ );
+		window_->draw( *obj_sprite, x_offset + x + p.first * grid_tileSize_,
+			 			y_offset + y + p.second * grid_tileSize_ );
 	}
 }
 
@@ -164,15 +198,32 @@ void SceneManager::drawShape(Graphics::GraphicsObject* obj)
  * @param y       y coordinate of the upper left angle -> position of the line (in the grid ref)
  * @param nbLines number of lines of background we want to draw
  */
-void SceneManager::drawBg(int y, int nbLines)
+void SceneManager::drawBg(int y, int nbLines, int scene_id)
 {
 	Sprite* sfond = sprites_[ S_GRIS ];
 	int height = nbLines * grid_tileSize_;
     int width = grid_nbColumns_*grid_tileSize_;
+    int x_offset, y_offset;
 
-	for ( int j = y+Y_OFFSET; j < height+Y_OFFSET; j += grid_tileSize_ ) // y
+    switch(scene_id)
     {
-        for ( int i = X_OFFSET ; i < width+X_OFFSET; i += grid_tileSize_ )// x
+        case 1:
+            x_offset = X_OFFSET;
+            y_offset = Y_OFFSET;
+            break;
+        case 2:
+            x_offset = X2_OFFSET;
+            y_offset = Y2_OFFSET;
+            break;
+        default:
+            std::cerr << "Numero de grid non valide" << std::endl;
+            exit(1);
+            break;
+    }
+
+	for ( int j = y+y_offset; j < height+y_offset; j += grid_tileSize_ ) // y
+    {
+        for ( int i = x_offset ; i < width+x_offset; i += grid_tileSize_ )// x
         {
             window_->draw( *sfond, i, j );
         }
@@ -201,7 +252,7 @@ void SceneManager::drawEraseLine(int line)
                    grid_tileSize_ * line);
     // On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
     window_->draw( above, X_OFFSET, grid_tileSize_ );
-    drawBg( Y_OFFSET, 1 ); //une ligne de bg en haut de l'écran
+    drawBg( Y_OFFSET, 1 , 1); //une ligne de bg en haut de l'écran
 }
 
 //////////////// STATS DISPLAY ////////////////

@@ -12,11 +12,12 @@
 Game::Game()
 :	manager_( nullptr )
 ,	presenceMap_()
+,	presenceMapB_()
 ,	score( 0 )
 ,	level( 1 )
 ,	tot_line( 0 )
 , 	speed( 1000 )
-,   multiplayer(false)
+,   multiplayer(true)
 {
 }
 
@@ -38,6 +39,9 @@ void Game::initialize()
 	// for (int i = 0 ; i < presenceMap_.size() ; i++)
 	// 	for (int j = 0 ; j < manager_->get_nbCol() ; j++)
 	// 		std::cout<< i <<" " << j <<" " << (bool)presenceMap_[i][j] << std::endl;
+	presenceMapB_.resize( manager_->get_nbRows(),
+						 std::vector< int >( manager_->get_nbCol(), 0 ) );
+	presenceMapB_.push_back( std::vector< int >( manager_->get_nbCol(), 1 ) );
 
 }
 
@@ -386,7 +390,7 @@ void Game::levelUp()
 }
 
 
-void Game::addToPresMap(Graphics::GraphicsObject* obj)
+void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int carre_x, carre_y;
 	int placeXinPM, placeYinPM;
@@ -394,17 +398,38 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj)
 	int y = obj -> getPositionY();
 	int colID = obj->getColor();
 
-
-	for (const auto& p : obj->tiles_[ obj->getRotation() ] )
+	switch(scene_id)
 	{
-		carre_x = x + p.first*manager_->get_tileSize();
-		carre_y = y + p.second*manager_->get_tileSize();
+		case 1:
+			for (const auto& p : obj->tiles_[ obj->getRotation() ] )
+			{
+				carre_x = x + p.first*manager_->get_tileSize();
+				carre_y = y + p.second*manager_->get_tileSize();
 
-		placeXinPM = carre_x / manager_->get_tileSize();
-		placeYinPM = carre_y / manager_->get_tileSize();
+				placeXinPM = carre_x / manager_->get_tileSize();
+				placeYinPM = carre_y / manager_->get_tileSize();
 
-		presenceMap_[placeYinPM][placeXinPM] = colID;
+				presenceMap_[placeYinPM][placeXinPM] = colID;
+			}
+			break;
+		case 2:
+			for (const auto& p : obj->tiles_[ obj->getRotation() ] )
+			{
+				carre_x = x + p.first*manager_->get_tileSize();
+				carre_y = y + p.second*manager_->get_tileSize();
+
+				placeXinPM = carre_x / manager_->get_tileSize();
+				placeYinPM = carre_y / manager_->get_tileSize();
+
+				presenceMapB_[placeYinPM][placeXinPM] = colID;
+			}
+			break;
+		default:
+			std::cerr << "Numero non valide" << std::endl;
+			exit(1);
+			break;
 	}
+	
 
 	return;
 }
@@ -434,7 +459,8 @@ void Game::loop()
 		int currentTime;
 		int y;
 
-		draw(co);
+		draw(co, 1);
+		draw(co, 2);
 
 		SDL_Delay(500);
 
@@ -479,7 +505,8 @@ void Game::loop()
 				{
 					toucheFond = true;
 					// on l'ajoute à la matrice de presence
-					addToPresMap(co);
+					addToPresMap(co,1);
+					addToPresMap(co,2);
 				}
 				lastTime = currentTime;
 			}
@@ -488,7 +515,8 @@ void Game::loop()
 			calcul_score(nb_line);
 			levelUp();
 
-			draw(co);
+			draw(co, 1);
+			draw(co, 2);
 		}
 
 	}
@@ -519,13 +547,24 @@ void Game::drawShadow(Graphics::GraphicsObject* obj)
 
 
 
-void Game::draw(Graphics::GraphicsObject* obj)
+void Game::draw(Graphics::GraphicsObject* obj, int scene_id)
 {
-	// La grille
-	manager_->drawBg(0, manager_->get_nbRows());
+	manager_->drawBg(0, manager_->get_nbRows(), scene_id);
 	drawShadow(obj);
-	manager_->drawShape(obj);
-	manager_->drawPresMap(presenceMap_);
+	manager_->drawShape(obj, scene_id);
+	switch (scene_id)
+	{
+		case 1:
+			manager_->drawPresMap(presenceMap_, scene_id);
+			break;
+		case 2:
+			manager_->drawPresMap(presenceMapB_, scene_id);
+			break;
+		default:
+			std::cerr << "Numero non valide" << std::endl;
+			exit(1);
+			break;
+	}
 
 	manager_->display_1p();
 	manager_->displayFigure(score, 430, 70);

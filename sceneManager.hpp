@@ -22,8 +22,8 @@
 #define Y_OFFSET 0
 
 //Pour la deuxieme fenetre quand on joue en multi
-//#define X2_OFFSET ?
-//#define Y2_OFFSET ?
+#define X2_OFFSET 555
+#define Y2_OFFSET 0
 /*Pour toutes les fonction draw, il faudrait rajouter un paremetre "int scene",
 si scene == 1 alors on dessine sur la premiere fenetre (on utlise X2, Y2_OFFSET),
 si scene == 2 alors on dessine sur le deuxième fenetre (on utilise X, Y_OFFSET)*/
@@ -43,9 +43,9 @@ public:
     const int get_windowHeight() const ;
 
 
-	void drawShape(Graphics::GraphicsObject* obj);
-	void drawBg(int y, int nbLines);
-	void drawPresMap(std::vector< std::vector< int > > presenceMap_);
+	void drawShape(Graphics::GraphicsObject* obj, int scene_id);
+	void drawBg(int y, int nbLines, int scene_id);
+	void drawPresMap(std::vector< std::vector< int > > presenceMap_, int scene_id);
     void drawShadow(Graphics::GraphicsObject& shadow);
     void drawEraseLine(int line);
 
