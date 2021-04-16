@@ -21,6 +21,7 @@ public:
 	void initialize();
 	void finalize();
     void loop();
+	void menu();
 
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
 	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant

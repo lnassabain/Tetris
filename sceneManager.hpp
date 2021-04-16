@@ -14,6 +14,9 @@
 #define S_SCORE 9
 #define S_LEVEL 10
 #define S_FIG 11
+#define S_ICON 21
+#define S_LETTER 22
+
 
 #define X_OFFSET 0
 #define Y_OFFSET 0
@@ -24,6 +27,8 @@
 /*Pour toutes les fonction draw, il faudrait rajouter un paremetre "int scene",
 si scene == 1 alors on dessine sur la premiere fenetre (on utlise X2, Y2_OFFSET),
 si scene == 2 alors on dessine sur le deuxième fenetre (on utilise X, Y_OFFSET)*/
+
+using Word = std::vector< int >; // index of each letter of word in alphabet (-1 = space)
 
 class SceneManager
 {
@@ -44,6 +49,8 @@ public:
     void drawShadow(Graphics::GraphicsObject& shadow);
     void drawEraseLine(int line);
 
+    void displayWord(int x, int y, Word word);
+    void displayMenu();
     void display_1p();
     void displayFigure(int figure, int x, int y);
 

@@ -14,8 +14,7 @@ int main( int argc, char** argv )
 	Game* game = new Game();
 	// - initialization
 	game->initialize();
-	// - main event loop
-	game->loop();
+	game->menu();
 	// - finalization
 	game->finalize();
 	delete game;

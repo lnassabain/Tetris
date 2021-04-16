@@ -551,3 +551,14 @@ void Game::draw()
 
 	manager_->update();
 }
+
+
+void Game::menu()
+{
+	manager_->displayMenu();
+
+	SDL_Delay(5000);
+
+
+	loop(); //lance le jeu
+}
