@@ -24,32 +24,30 @@ public:
 	void menu();
 
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
-	Graphics::GraphicsObject* getCurrObj(); //Getter de l'objet courant
-	void setCurrObj(Graphics::GraphicsObject* obj); //Setter de l'objet courant
 
 	void addToPresMap(Graphics::GraphicsObject* obj); //Noie un objet dans la presenceMap
 	int eraseLine();
 
 	bool collisionCreation(Graphics::GraphicsObject* obj); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
-	bool collisionLeft();
-	bool collisionRight();
-	bool collisionDown(Graphics::GraphicsObject* obj);
-	bool collisionRotation();
+	bool collisionLeft(Graphics::GraphicsObject* obj); //verifie si deplacement gauche possible
+	bool collisionRight(Graphics::GraphicsObject* obj); //verifie si deplacement droite possible
+	bool collisionDown(Graphics::GraphicsObject* obj);  //verifie si deplacement bas possible
+	bool collisionRotation(Graphics::GraphicsObject* obj);  //verife si rotation possible
 
 protected:
     /*Keyboard management*/
-	void keyboard( const std::uint8_t* keys );
+	/*Renvoie l'objet qu'on a deplacé(ou pas)*/
+	Graphics::GraphicsObject* keyboard( const std::uint8_t* keys, Graphics::GraphicsObject* obj );
 
 private:
 	std::vector< std::vector< int > > presenceMap_;
 	void drawMap();
 	SceneManager* manager_;
-	void drawShadow();
-	void draw();
+	void drawShadow(Graphics::GraphicsObject* obj);
+	void draw(Graphics::GraphicsObject* obj);
 
 
-	Graphics::GraphicsObject* current_obj;
-
+	bool multiplayer; //true if multiplayer game, else false
 	int score;
 	int level;
 	int tot_line;

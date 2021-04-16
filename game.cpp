@@ -12,7 +12,6 @@
 Game::Game()
 :	manager_( nullptr )
 ,	presenceMap_()
-,	current_obj( nullptr )
 ,	score( 0 )
 ,	level( 1 )
 ,	tot_line( 0 )
@@ -48,27 +47,17 @@ void Game::finalize()
 	manager_ = nullptr;
 }
 
-Graphics::GraphicsObject* Game::getCurrObj(){
-	return current_obj;
-}
 
-void Game::setCurrObj(Graphics::GraphicsObject* obj){
-	current_obj = obj;
-}
-
-
-bool Game::collisionRotation()
+bool Game::collisionRotation(Graphics::GraphicsObject* obj)
 {
-	Graphics::GraphicsObject* co;
-	co = getCurrObj();
-	int rot = co->getRotation();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int rot = obj->getRotation();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 
 	int new_x, new_y;
 	int placeXinPM, placeYinPM;
 
-	const Graphics::TShape shapeTiles = co->tiles_[(rot+1) % 4]; //la prochaine rotation
+	const Graphics::TShape shapeTiles = obj->tiles_[(rot+1) % 4]; //la prochaine rotation
 	for (const auto& p : shapeTiles)
 	{
 		new_x = x + p.first * manager_->get_tileSize();
@@ -99,16 +88,14 @@ bool Game::collisionRotation()
 
 
 
-bool Game::collisionLeft()
+bool Game::collisionLeft(Graphics::GraphicsObject* obj)
 {
-	Graphics::GraphicsObject* co;
-	co = getCurrObj();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 	int new_x, new_y;
 	int placeXinPM, placeYinPM;
 
-	const Graphics::TShape shapeTiles = co->tiles_[ co->getRotation() ]; //current rotation ID;
+	const Graphics::TShape shapeTiles = obj->tiles_[ obj->getRotation() ]; //current rotation ID;
 	for ( const auto& p : shapeTiles ) //tous les carrés
 	{
 		new_x = x + (p.first-1) * manager_->get_tileSize();
@@ -132,16 +119,14 @@ bool Game::collisionLeft()
 	return false;
 }
 
-bool Game::collisionRight()
+bool Game::collisionRight(Graphics::GraphicsObject* obj)
 {
-	Graphics::GraphicsObject* co;
-	co = getCurrObj();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 	int new_x, new_y;
 	int placeXinPM, placeYinPM;
 
-	const Graphics::TShape shapeTiles = co->tiles_[co->getRotation()];
+	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
 		new_x = x + (p.first+1) * manager_->get_tileSize();
@@ -219,46 +204,45 @@ bool Game::collisionCreation(Graphics::GraphicsObject* obj)
 }
 
 
-void Game::keyboard( const std::uint8_t* keys )
+Graphics::GraphicsObject* Game::keyboard( const std::uint8_t* keys, Graphics::GraphicsObject* obj )
 {
-	Graphics::GraphicsObject* co;
-	co = getCurrObj();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 	if (keys[SDL_SCANCODE_UP]){
-		if (!collisionRotation())
+		if (!collisionRotation(obj))
 		{
-			co -> rotate();
+			obj -> rotate();
 		}
 	}
 	if (keys[SDL_SCANCODE_LEFT])
 	{
-		if (!collisionLeft()) //test si possible de se deplacer vers la gauche
+		if (!collisionLeft(obj)) //test si possible de se deplacer vers la gauche
 		{
-			co -> setPositionX(x-manager_->get_tileSize());
+			obj -> setPositionX(x-manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_RIGHT])
 	{
-		if (!collisionRight()) //test si possible de se deplacer vers la droite
+		if (!collisionRight(obj)) //test si possible de se deplacer vers la droite
 		{
-			co -> setPositionX(x+manager_->get_tileSize());
+			obj -> setPositionX(x+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		if (!collisionDown(co)) //test si possible de se deplacer vers le bas
+		if (!collisionDown(obj)) //test si possible de se deplacer vers le bas
 		{
-			co -> setPositionY(y+manager_->get_tileSize());
+			obj -> setPositionY(y+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
-		while (!collisionDown(co))
+		while (!collisionDown(obj))
 		{
-			co->setPositionY(co->getPositionY()+manager_->get_tileSize());
+			obj->setPositionY(obj->getPositionY()+manager_->get_tileSize());
 		}
 	}
-	return;
+
+	return obj;
 }
 
 Graphics::GraphicsObject* Game::shapeRand(){
@@ -434,13 +418,13 @@ void Game::loop()
 		//On cree l'objet courant
 		Graphics::GraphicsObject* co;
 		co = shapeRand();
+
 		if(collisionCreation(co))
 		{
 			std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
 					  << std::endl;
 			exit(0);
 		}
-		setCurrObj(co);
 
 
 
@@ -450,7 +434,7 @@ void Game::loop()
 		int currentTime;
 		int y;
 
-		draw();
+		draw(co);
 
 		SDL_Delay(500);
 
@@ -477,7 +461,7 @@ void Game::loop()
 			if (check_key==true)
 			{
 				const Uint8* state = SDL_GetKeyboardState(NULL);
-				keyboard( state );
+				co = keyboard(state, co);
 				quit |= state[ SDL_SCANCODE_ESCAPE ];
 				check_key = false;
 			}
@@ -504,7 +488,7 @@ void Game::loop()
 			calcul_score(nb_line);
 			levelUp();
 
-			draw();
+			draw(co);
 		}
 
 	}
@@ -515,14 +499,13 @@ void Game::loop()
 /**
  * Draws the shadow of the current piece on the floor
  */
-void Game::drawShadow()
+void Game::drawShadow(Graphics::GraphicsObject* obj)
 {
 	// On cherche où serait la pièce au sol ; code de SPACE
-	Graphics::GraphicsObject* co = getCurrObj();
-	int x = co->getPositionX();
-	int y = co->getPositionY();
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
 
-	Graphics::GraphicsObject shadow = *co; //copie
+	Graphics::GraphicsObject shadow = *obj; //copie
 
 	int y_new = y;
 	while (!collisionDown(&shadow))
@@ -536,12 +519,12 @@ void Game::drawShadow()
 
 
 
-void Game::draw()
+void Game::draw(Graphics::GraphicsObject* obj)
 {
 	// La grille
 	manager_->drawBg(0, manager_->get_nbRows());
-	drawShadow();
-	manager_->drawShape(getCurrObj());
+	drawShadow(obj);
+	manager_->drawShape(obj);
 	manager_->drawPresMap(presenceMap_);
 
 	manager_->display_1p();
