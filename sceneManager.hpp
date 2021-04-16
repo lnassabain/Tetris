@@ -13,6 +13,7 @@
 #define S_SHADOW 8
 #define S_SCORE 9
 #define S_LEVEL 10
+#define S_FIG 11
 
 #define X_OFFSET 0
 #define Y_OFFSET 0

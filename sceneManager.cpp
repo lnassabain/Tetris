@@ -14,18 +14,42 @@ SceneManager::SceneManager()
     window_ = new Window( windowTitle, windowWidth, windowHeight );
     window_->initialize();
 
+    // Squares of color for each piece
     Surface* carre_surf = new Surface ("./tetris_sprites.bmp");
-
     for (int i = 0 ; i < 9 ; i++)
     {
         sprites_.emplace_back( new Sprite( carre_surf, i*(grid_tileSize_), 0,
                                grid_tileSize_, grid_tileSize_ ) );
     }
 
+    // Score and Level
     Surface* score_surf = new Surface ("./score_level.bmp");
     SDL_SetColorKey( score_surf->getSurface(), true, SDL_MapRGB(score_surf->getSurface()->format, 30, 43, 128) );
     sprites_.emplace_back( new Sprite(score_surf, 5, 0, 192, 50) ); //score
     sprites_.emplace_back( new Sprite(score_surf, 5, 100, 196, 50) ); //level
+
+    // Figures
+    Surface* figure_surf = new Surface("./chiffres.bmp");
+    SDL_SetColorKey( figure_surf->getSurface(), true, SDL_MapRGB(figure_surf->getSurface()->format, 30, 43, 128) );
+    sprites_.emplace_back( new Sprite( figure_surf, 8, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 48, 0, 16, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 70, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 106, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 145, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 182, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 219, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 253, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 290, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 328, 0, 34, 60 ) );
+
+
+    // for (int i = 11 ; i < 22 ; i++ )
+    // {
+    //     window_->draw(*sprites_[i], ((i-S_FIG)*34)%320, 0);
+    //     window_->update();
+    //
+    //     SDL_Delay(500);
+    // }
 }
 SceneManager::~SceneManager()
 {
