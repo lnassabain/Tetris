@@ -29,10 +29,10 @@ SceneManager::SceneManager()
     sprites_.emplace_back( new Sprite(score_surf, 5, 100, 196, 50) ); //level
 
     // Figures
-    Surface* figure_surf = new Surface("./chiffres.bmp");
+    Surface* figure_surf = new Surface("./chiffre1.bmp");
     SDL_SetColorKey( figure_surf->getSurface(), true, SDL_MapRGB(figure_surf->getSurface()->format, 30, 43, 128) );
-    sprites_.emplace_back( new Sprite( figure_surf, 8, 0, 34, 60 ) );
-    sprites_.emplace_back( new Sprite( figure_surf, 48, 0, 16, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 0, 0, 34, 60 ) );
+    sprites_.emplace_back( new Sprite( figure_surf, 40, 0, 30, 60 ) );
     sprites_.emplace_back( new Sprite( figure_surf, 70, 0, 34, 60 ) );
     sprites_.emplace_back( new Sprite( figure_surf, 106, 0, 34, 60 ) );
     sprites_.emplace_back( new Sprite( figure_surf, 145, 0, 34, 60 ) );
@@ -176,8 +176,39 @@ void SceneManager::drawEraseLine(int line)
 
 void SceneManager::display_1p()
 {
+    const SDL_Rect fond = { 320, 0, 235, 640 };
+    SDL_FillRect(window_->getSurface()->getSurface(), &fond, 0);
     window_->draw(*sprites_[S_SCORE], 330, 15);
     window_->draw(*sprites_[S_LEVEL], 330, 15+80+50);
+}
+
+void SceneManager::displayFigure(int figure, int x, int y)
+{
+    int unite = 0;
+    int dizaine = 0;
+    int centaine = 0;
+    int millier = 0;
+
+    if (figure >= 1000)
+    {
+        millier = figure / 1000;
+        figure %= 1000;
+    }
+    if (figure >= 100)
+    {
+        centaine = figure / 100;
+        figure %= 100;
+    }
+    if (figure >= 10)
+    {
+        dizaine = figure / 10;
+        unite = figure % 10;
+    }
+
+    window_->draw(*sprites_[S_FIG + millier], x-32*2, y);
+    window_->draw(*sprites_[S_FIG + centaine], x-32, y);
+    window_->draw(*sprites_[S_FIG + dizaine], x, y);
+    window_->draw(*sprites_[S_FIG + unite], x+32, y);
 }
 
 

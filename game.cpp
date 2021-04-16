@@ -545,6 +545,9 @@ void Game::draw()
 	manager_->drawPresMap(presenceMap_);
 
 	manager_->display_1p();
+	manager_->displayFigure(score, 420, 70);
+	manager_->displayFigure(level, 420, 205);
+
 
 	manager_->update();
 }
