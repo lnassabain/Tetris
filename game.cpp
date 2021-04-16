@@ -539,7 +539,6 @@ void Game::drawShadow()
 
 void Game::draw()
 {
-	std::cout << "draw game" << std::endl;
 	manager_->drawBg(0, manager_->get_nbRows());
 
 	//drawShadow();

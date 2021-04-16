@@ -3,7 +3,7 @@
 
 SceneManager::SceneManager()
 :	window_( nullptr )
-,	sprites_()
+,	sprites_(  )
 ,	grid_nbRows_( 20 )
 ,	grid_nbColumns_( 10 )
 ,	grid_tileSize_( 32 )
@@ -14,22 +14,23 @@ SceneManager::SceneManager()
     window_ = new Window( windowTitle, windowWidth, windowHeight );
     window_->initialize();
 
-    Surface carre_surf ("./tetris_sprites.bmp");
+    Surface* carre_surf = new Surface ("./tetris_sprites.bmp");
 
     for (int i = 0 ; i < 9 ; i++)
     {
-        sprites_.emplace_back( new Sprite( &carre_surf, i*(grid_tileSize_), 0,
+        sprites_.emplace_back( new Sprite( carre_surf, i*(grid_tileSize_), 0,
                                grid_tileSize_, grid_tileSize_ ) );
     }
 
-    Surface score_surf ("./score_level.bmp");
-    SDL_SetColorKey( score_surf.getSurface(), true, SDL_MapRGB(score_surf.getSurface()->format, 30, 43, 128) );
-    sprites_.emplace_back( new Sprite(&score_surf, 5, 0, 192, 50) ); //score
-    sprites_.emplace_back( new Sprite(&score_surf, 5, 100, 196, 50) ); //level
+    Surface* score_surf = new Surface ("./score_level.bmp");
+    SDL_SetColorKey( score_surf->getSurface(), true, SDL_MapRGB(score_surf->getSurface()->format, 30, 43, 128) );
+    sprites_.emplace_back( new Sprite(score_surf, 5, 0, 192, 50) ); //score
+    sprites_.emplace_back( new Sprite(score_surf, 5, 100, 196, 50) ); //level
     window_->draw(*sprites_[S_SCORE], 0, 0);
     window_->draw(*sprites_[S_LEVEL], 0, 100);
+
     window_->update();
-    SDL_Delay(5000);
+    SDL_Delay(500);
 
 }
 SceneManager::~SceneManager()
@@ -119,12 +120,13 @@ void SceneManager::drawBg(int y, int nbLines)
 	int height = nbLines * grid_tileSize_;
     int width = grid_nbColumns_*grid_tileSize_;
 
-    std::cout << sfond << height << width << std::endl;
-
-
-	for ( int j = y+Y_OFFSET; j < height; j += grid_tileSize_ ) // y
-		for ( int i = X_OFFSET ; i <= width; i += grid_tileSize_ )// x
-			window_->draw( *sfond, i, j );
+	for ( int j = y+Y_OFFSET; j < height+Y_OFFSET; j += grid_tileSize_ ) // y
+    {
+        for ( int i = X_OFFSET ; i < width+X_OFFSET; i += grid_tileSize_ )// x
+        {
+            window_->draw( *sfond, i, j );
+        }
+    }
 }
 
 
