@@ -521,7 +521,7 @@ int Game::eraseLine(int scene_id)
 
 void Game::calcul_score(int nb_line, int scene_id)
 {
-	int sc_tmp; 
+	int sc_tmp;
 	switch(scene_id)
 	{
 		case 1:
@@ -680,8 +680,8 @@ void Game::loop(bool multiplayer)
 		int currentTime;
 		int y;
 
-		draw(co, next, 1);
-		draw(co, next, 2);
+		draw(co, next, 1, multiplayer);
+		draw(co, next, 2, multiplayer);
 
 		SDL_Delay(500);
 
@@ -738,8 +738,8 @@ void Game::loop(bool multiplayer)
 			calcul_score(nb_line, 2);
 			levelUp();
 
-			draw(co, next, 1);
-			draw(co, next, 2);
+			draw(co, next, 1, multiplayer);
+			draw(co, next, 2, multiplayer);
 		}
 
 	}
@@ -770,7 +770,8 @@ void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 
 
 
-void Game::draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next, int scene_id)
+void Game::draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next,
+				int scene_id, bool multiplayer)
 {
 	manager_->drawBg(0, manager_->get_nbRows(), scene_id);
 	drawShadow(obj, scene_id);
@@ -789,7 +790,13 @@ void Game::draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next, i
 			break;
 	}
 
-	manager_->display_1p();
+	if (!multiplayer)
+		manager_->display_1p();
+	else
+	{
+		manager_->display_2p();
+		manager_->displayFigure(scoreB, 430, 405);
+	}
 	manager_->displayFigure(score, 430, 70);
 	manager_->displayFigure(level, 430, 205);
 	manager_->displayNext(next);

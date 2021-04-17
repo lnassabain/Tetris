@@ -353,6 +353,31 @@ void SceneManager::display_1p()
     window_->draw(*sprites_[S_LEVEL], 330, 15+80+50);
 }
 
+
+void SceneManager::display_2p()
+{
+    display_1p();
+
+    // Affichage écriture CPU :
+    Word cpu = { 3, 16, 21 };
+
+    int w = sprites_[S_LETTER]->width() * cpu.size() + 10;
+    int h = sprites_[S_LETTER]->height() + 10;
+    int x = 235 / 2 - w / 2 + 320;
+    int y = 295;
+    const SDL_Rect fond = { x, y, w, h };
+    SDL_Surface* win_surf = window_->getSurface()->getSurface();
+    SDL_FillRect(win_surf, &fond,
+                 SDL_MapRGB(win_surf->format, 0, 255, 251));
+
+    displayWord(x+5, y+5, cpu);
+
+    // Affiche sprite score :
+    window_->draw(*sprites_[S_SCORE], 235/2 - sprites_[S_SCORE]->width()/2 + 320,
+                  y + h + 5);
+
+}
+
 void SceneManager::displayFigure(int figure, int x, int y)
 {
     int unite = 0;
@@ -401,7 +426,7 @@ void SceneManager::displayNext(Graphics::GraphicsObject* next)
 
     displayWord(x+5, y+5, next_w);
 
-    // Affichage piece
+    // Affichage piece :
     const int colorID = next->getColor();
 	Sprite* next_sprite = sprites_[ colorID ];
     int y_offset =  y + h + 10 ;

@@ -52,6 +52,7 @@ public:
     void displayWord(int x, int y, Word word);
     void displayMenu(int mode);
     void display_1p();
+    void display_2p();
     void displayFigure(int figure, int x, int y);
     void displayNext(Graphics::GraphicsObject* next);
 

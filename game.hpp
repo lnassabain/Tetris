@@ -48,7 +48,8 @@ private:
 	void drawMap();
 	SceneManager* manager_;
 	void drawShadow(Graphics::GraphicsObject* obj, int scene_id);
-	void draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next, int scene_id);
+	void draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next,
+			  int scene_id, bool multiplayer);
 
 
 	int score;
