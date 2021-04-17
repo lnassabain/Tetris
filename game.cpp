@@ -52,25 +52,45 @@ void Game::finalize()
 }
 
 
-bool Game::collisionRotation(Graphics::GraphicsObject* obj)
+bool Game::collisionRotation(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int rot = obj->getRotation();
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
-
+	int windowWidth = manager_->get_nbCol() * manager_->get_tileSize();
 	int new_x, new_y;
 	int placeXinPM, placeYinPM;
+	int x_offset, y_offset;
+	std::vector< std::vector< int > > presMap;
+
+	switch(scene_id)
+	{
+		case 1:
+			presMap = presenceMap_;
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
 
 	const Graphics::TShape shapeTiles = obj->tiles_[(rot+1) % 4]; //la prochaine rotation
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * manager_->get_tileSize();
-		new_y = y + p.second * manager_->get_tileSize();
+		new_x = x - x_offset + p.first * manager_->get_tileSize();
+		new_y = y - y_offset + p.second * manager_->get_tileSize();
 
 		placeXinPM = new_x / manager_->get_tileSize(); //On obtient l'indice x dans PresenceMap
 		placeYinPM = new_y / manager_->get_tileSize(); //On obtient l'indice y dans PresenceMap
 
-		if (presenceMap_[placeYinPM][placeXinPM] != 0)
+		if (presMap[placeYinPM][placeXinPM] != 0)
 		{
 			return true;
 		}
@@ -80,7 +100,7 @@ bool Game::collisionRotation(Graphics::GraphicsObject* obj)
 			return true;
 		}
 
-		else if (new_x > manager_->get_windowWidth() - manager_->get_tileSize())
+		else if (new_x > windowWidth - manager_->get_tileSize())
 		{
 			return true;
 		}
@@ -92,18 +112,39 @@ bool Game::collisionRotation(Graphics::GraphicsObject* obj)
 
 
 
-bool Game::collisionLeft(Graphics::GraphicsObject* obj)
+bool Game::collisionLeft(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 	int new_x, new_y;
+	int x_offset, y_offset;
 	int placeXinPM, placeYinPM;
+	std::vector< std::vector< int > > presMap;
+
+	switch(scene_id)
+	{
+		case 1:
+			presMap = presenceMap_;
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+
+	}
 
 	const Graphics::TShape shapeTiles = obj->tiles_[ obj->getRotation() ]; //current rotation ID;
 	for ( const auto& p : shapeTiles ) //tous les carrés
 	{
-		new_x = x + (p.first-1) * manager_->get_tileSize();
-		new_y = y + (p.second) * manager_->get_tileSize();
+		new_x = x - x_offset + (p.first-1) * manager_->get_tileSize();
+		new_y = y - y_offset + (p.second) * manager_->get_tileSize();
 
 		if (new_x < 0) // si le coin gauche du carré est inférieur à 0
 		{
@@ -113,7 +154,7 @@ bool Game::collisionLeft(Graphics::GraphicsObject* obj)
 		{
 			placeXinPM = new_x / manager_->get_tileSize();
 			placeYinPM = new_y / manager_->get_tileSize();
-			if (presenceMap_[placeYinPM][placeXinPM] != 0)
+			if (presMap[placeYinPM][placeXinPM] != 0)
 			{
 				return true;
 			}
@@ -123,20 +164,41 @@ bool Game::collisionLeft(Graphics::GraphicsObject* obj)
 	return false;
 }
 
-bool Game::collisionRight(Graphics::GraphicsObject* obj)
+bool Game::collisionRight(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 	int new_x, new_y;
+	int x_offset, y_offset;
 	int placeXinPM, placeYinPM;
+	std::vector< std::vector< int > > presMap;
+	int windowWidth = manager_->get_nbCol() * manager_->get_tileSize();
+
+	switch(scene_id)
+	{
+		case 1:
+			presMap = presenceMap_;
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
 
 	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + (p.first+1) * manager_->get_tileSize();
-		new_y = y + (p.second) * manager_->get_tileSize();
+		new_x = x - x_offset + (p.first+1) * manager_->get_tileSize();
+		new_y = y - y_offset + (p.second) * manager_->get_tileSize();
 
-		if (new_x > manager_->get_windowWidth() - manager_->get_tileSize())
+		if (new_x > windowWidth - manager_->get_tileSize())
 		{
 			return true;
 		}
@@ -144,7 +206,7 @@ bool Game::collisionRight(Graphics::GraphicsObject* obj)
 		{
 			placeXinPM = new_x / manager_->get_tileSize();
 			placeYinPM = new_y / manager_->get_tileSize();
-			if (presenceMap_[placeYinPM][placeXinPM] != 0)
+			if (presMap[placeYinPM][placeXinPM] != 0)
 			{
 				return true;
 			}
@@ -154,25 +216,46 @@ bool Game::collisionRight(Graphics::GraphicsObject* obj)
 	return false;
 }
 
-bool Game::collisionDown(Graphics::GraphicsObject* obj)
+bool Game::collisionDown(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int new_x;
 	int new_y;
 	int placeXinPM; //place du carré dans le PresenceMap, coord. x
 	int placeYinPM; //place du carré dans le PresenceMap, coord. y
+	int x_offset, y_offset;
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
+	std::vector< std::vector< int > > presMap;
+
+	switch(scene_id)
+	{
+		case 1:
+			presMap = presenceMap_;
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
+
 
 	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * manager_->get_tileSize();
-		new_y = y + (p.second+1)*manager_->get_tileSize();
+		new_x = x - x_offset + p.first * manager_->get_tileSize();
+		new_y = y - y_offset + (p.second+1)*manager_->get_tileSize();
 
 		placeXinPM = new_x / manager_->get_tileSize(); //On obtient l'indice x dans PresenceMap
 		placeYinPM = new_y / manager_->get_tileSize(); //On obtient l'indice y dans PresenceMap
 
-		if (presenceMap_[placeYinPM][placeXinPM] != 0)
+		if (presMap[placeYinPM][placeXinPM] != 0)
 		{
 			return true;
 		}
@@ -182,23 +265,44 @@ bool Game::collisionDown(Graphics::GraphicsObject* obj)
 }
 
 
-bool Game::collisionCreation(Graphics::GraphicsObject* obj)
+bool Game::collisionCreation(Graphics::GraphicsObject* obj, int scene_id)
 {
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 	int new_x, new_y;
+	int x_offset, y_offset;
 	int placeXinPM, placeYinPM;
+	std::vector< std::vector< int > > presMap;
+
+	switch(scene_id)
+	{
+		case 1:
+			presMap = presenceMap_;
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
+			break;
+		default:
+			std::cerr << "Numero non valide" << std::endl;
+			exit(1);
+			break;
+	}
+
 
 	const Graphics::TShape shapeTiles = obj->tiles_[obj->getRotation()];
 	for (const auto& p : shapeTiles)
 	{
-		new_x = x + p.first * manager_->get_tileSize();
-		new_y = y + p.second * manager_->get_tileSize();
+		new_x = x - x_offset + p.first * manager_->get_tileSize();
+		new_y = y - y_offset + p.second * manager_->get_tileSize();
 
 		placeXinPM = new_x / manager_->get_tileSize();
 		placeYinPM = new_y / manager_->get_tileSize();
 
-		if (presenceMap_[placeYinPM][placeXinPM] != 0)
+		if (presMap[placeYinPM][placeXinPM] != 0)
 		{
 			return true;
 		}
@@ -213,34 +317,34 @@ Graphics::GraphicsObject* Game::keyboard( const std::uint8_t* keys, Graphics::Gr
 	int x = obj->getPositionX();
 	int y = obj->getPositionY();
 	if (keys[SDL_SCANCODE_UP]){
-		if (!collisionRotation(obj))
+		if (!collisionRotation(obj,1))
 		{
 			obj -> rotate();
 		}
 	}
 	if (keys[SDL_SCANCODE_LEFT])
 	{
-		if (!collisionLeft(obj)) //test si possible de se deplacer vers la gauche
+		if (!collisionLeft(obj,1)) //test si possible de se deplacer vers la gauche
 		{
 			obj -> setPositionX(x-manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_RIGHT])
 	{
-		if (!collisionRight(obj)) //test si possible de se deplacer vers la droite
+		if (!collisionRight(obj,1)) //test si possible de se deplacer vers la droite
 		{
 			obj -> setPositionX(x+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		if (!collisionDown(obj)) //test si possible de se deplacer vers le bas
+		if (!collisionDown(obj,1)) //test si possible de se deplacer vers le bas
 		{
 			obj -> setPositionY(y+manager_->get_tileSize());
 		}
 	}
 	if (keys[SDL_SCANCODE_SPACE]){
-		while (!collisionDown(obj))
+		while (!collisionDown(obj,1))
 		{
 			obj->setPositionY(obj->getPositionY()+manager_->get_tileSize());
 		}
@@ -259,25 +363,25 @@ Graphics::GraphicsObject* Game::cpuMove(Graphics::GraphicsObject* obj)
 	switch(m)
 	{
 		case 0: //deplacement à gauche
-			if (!collisionLeft(obj))
+			if (!collisionLeft(obj, 2))
 			{
 				obj -> setPositionX(x-manager_->get_tileSize());
 			}
 			break;
 		case 1: //deplacement à droite
-			if (!collisionRight(obj))
+			if (!collisionRight(obj, 2))
 			{
 				obj -> setPositionX(x+manager_->get_tileSize());
 			}
 			break;
 		case 2: //deplacement vers le bas
-			if (!collisionDown(obj))
+			if (!collisionDown(obj, 2))
 			{
 				obj -> setPositionY(y+manager_->get_tileSize());
 			}
 			break;
 		case 3: //rotation
-			if (!collisionRotation(obj))
+			if (!collisionRotation(obj, 2))
 			{
 				obj -> rotate();
 			}
@@ -285,7 +389,7 @@ Graphics::GraphicsObject* Game::cpuMove(Graphics::GraphicsObject* obj)
 		case 4: //on ne fait rien
 			break;
 		case 5: //on drop la piece
-			while (!collisionDown(obj))
+			while (!collisionDown(obj, 2))
 			{
 				obj->setPositionY(obj->getPositionY()+manager_->get_tileSize());
 			}
@@ -558,7 +662,7 @@ void Game::loop(bool multiplayer)
 	//	std::cout << "co adr " << co << std::endl;
 
 
-		if(collisionCreation(co))
+		if(collisionCreation(co,1))
 		{
 			std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
 					  << std::endl;
@@ -612,7 +716,7 @@ void Game::loop(bool multiplayer)
 			currentTime = SDL_GetTicks();
 			if (currentTime > lastTime + speed)
 			{
-				if (!collisionDown(co)) //si on peut se deplacer vers le bas
+				if (!collisionDown(co,1)) //si on peut se deplacer vers le bas
 				{
 					y = co -> getPositionY();
 					//on se deplace vers le bas
@@ -655,7 +759,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 	Graphics::GraphicsObject shadow = *obj; //copie
 
 	int y_new = y;
-	while (!collisionDown(&shadow))
+	while (!collisionDown(&shadow, 1))
 	{
 		y_new += manager_->get_tileSize();
 		shadow.setPositionY(y_new);

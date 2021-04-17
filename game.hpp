@@ -28,11 +28,11 @@ public:
 	void addToPresMap(Graphics::GraphicsObject* obj, int scene_id); //Noie un objet dans la presenceMap
 	int eraseLine(int scene_id);
 
-	bool collisionCreation(Graphics::GraphicsObject* obj); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
-	bool collisionLeft(Graphics::GraphicsObject* obj); //verifie si deplacement gauche possible
-	bool collisionRight(Graphics::GraphicsObject* obj); //verifie si deplacement droite possible
-	bool collisionDown(Graphics::GraphicsObject* obj);  //verifie si deplacement bas possible
-	bool collisionRotation(Graphics::GraphicsObject* obj);  //verife si rotation possible
+	bool collisionCreation(Graphics::GraphicsObject* obj, int scene_id); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
+	bool collisionLeft(Graphics::GraphicsObject* obj, int scene_id); //verifie si deplacement gauche possible
+	bool collisionRight(Graphics::GraphicsObject* obj, int scene_id); //verifie si deplacement droite possible
+	bool collisionDown(Graphics::GraphicsObject* obj, int scene_id);  //verifie si deplacement bas possible
+	bool collisionRotation(Graphics::GraphicsObject* obj, int scene_id);  //verife si rotation possible
 
 protected:
     /*Keyboard management*/
