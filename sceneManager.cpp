@@ -187,8 +187,8 @@ void SceneManager::drawShape(Graphics::GraphicsObject* obj, int scene_id)
 		const int x = obj->getPositionX();
 		const int y = obj->getPositionY();
 
-		window_->draw( *obj_sprite, x_offset + x + p.first * grid_tileSize_,
-			 			y_offset + y + p.second * grid_tileSize_ );
+		window_->draw( *obj_sprite, x + p.first * grid_tileSize_,
+			 			y + p.second * grid_tileSize_ );
 	}
 }
 

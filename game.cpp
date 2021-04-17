@@ -655,7 +655,8 @@ void Game::loop(bool multiplayer)
 	bool quit = false;
 	bool toucheFond = true;
 	bool toucheFondB = true;
-	//Graphics::GraphicsObject obj;
+	int lastTime=0;
+	int currentTime;
 	Graphics::GraphicsObject* co;
 	Graphics::GraphicsObject* coB;
 	Graphics::GraphicsObject* next = shapeRand();
@@ -664,8 +665,6 @@ void Game::loop(bool multiplayer)
 	{
 
 		bool check_key = false; //un bouton a été appuyé si true
-		int lastTime=0;
-		int currentTime;
 		int y;
 
 		if (toucheFond==true)
@@ -684,18 +683,19 @@ void Game::loop(bool multiplayer)
 			next = shapeRand();
 			draw(co, next, 1);
 			toucheFond = false;
-			SDL_Delay(500);
+			SDL_Delay(400);
 		}
 
 
 		if(multiplayer && toucheFondB==true)
 		{
 			//On cree l'objet pour la deuxieme fenetre
-			Graphics::GraphicsObject* coB = shapeRand();
+			coB = shapeRand();
 			coB -> setPositionX(coB->getPositionX() + 555);
 			if(collisionCreation(coB,2))
 			{
-				std::cout << "GAME OVER. SCORE : " << scoreB << std::endl;
+				std::cout << "GAME OVER. YOUR SCORE: " << score << std::endl;
+				std::cout << "GAME OVER. SCORE CPU: " << scoreB << std::endl;
 				exit(0);
 			}
 			draw(coB, next, 2);
@@ -733,7 +733,7 @@ void Game::loop(bool multiplayer)
 		}
 
 		currentTime = SDL_GetTicks();
-		if (currentTime > lastTime + 5000)
+		if (currentTime > lastTime + speed)
 		{
 			if (multiplayer)
 			{
@@ -791,7 +791,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 	Graphics::GraphicsObject shadow = *obj; //copie
 
 	int y_new = y;
-	while (!collisionDown(&shadow, 1))
+	while (!collisionDown(&shadow, scene_id))
 	{
 		y_new += manager_->get_tileSize();
 		shadow.setPositionY(y_new);
