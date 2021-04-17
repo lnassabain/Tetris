@@ -578,7 +578,7 @@ void Game::calcul_score(int nb_line, int scene_id)
 	}
 }
 
-void Game::levelUp()
+void Game::levelUp(bool multiplayer)
 {
 	if ( tot_line >= 10 * (level) )
 	{
@@ -591,10 +591,11 @@ void Game::levelUp()
 		std::cout << "LEVEL UP : " << level << std::endl;
 	}
 
-	if (level == 16)
+	if (level == 16 && ! multiplayer)
 	{
 		std::cout << "LEVEL 15 COMPLETED : SCORE = " << score
 				  << " CONGRATULATION !" << std::endl;
+		SDL_Delay(2000);
 		exit(0);
 	}
 }
@@ -666,6 +667,7 @@ void Game::loop(bool multiplayer)
 		{
 			std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
 					  << std::endl;
+			manager_->displayGO();
 			exit(0);
 		}
 
@@ -736,7 +738,7 @@ void Game::loop(bool multiplayer)
 			int nb_lineB = eraseLine(2);
 			calcul_score(nb_line, 1);
 			calcul_score(nb_line, 2);
-			levelUp();
+			levelUp(multiplayer);
 
 			draw(co, next, 1, multiplayer);
 			draw(co, next, 2, multiplayer);
@@ -862,7 +864,7 @@ void Game::menu()
 
 				manager_->displayMenu(mode);
 
-			//	quit |= key[ SDL_SCANCODE_ESCAPE ];
+				quit |= key[ SDL_SCANCODE_ESCAPE ]; //quitte si echap
 				break;
 
 		}

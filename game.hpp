@@ -58,7 +58,7 @@ private:
 	int tot_line;
 	double speed;
 	void calcul_score(int nb_line, int scene_id);
-	void levelUp();
+	void levelUp(bool multiplayer);
 
 };
 

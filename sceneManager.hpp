@@ -49,12 +49,13 @@ public:
     void drawShadow(Graphics::GraphicsObject& shadow, int scene_id);
     void drawEraseLine(int line, int scene_id);
 
-    void displayWord(int x, int y, Word word);
     void displayMenu(int mode);
     void display_1p();
     void display_2p();
-    void displayFigure(int figure, int x, int y);
     void displayNext(Graphics::GraphicsObject* next);
+    void displayGO();
+    void displayFigure(int figure, int x, int y);
+
 
     void update();
 
@@ -69,5 +70,8 @@ private:
 
     Surface* planche_;
     std::vector< Sprite* > sprites_;
+
+    void displayWord(int x, int y, Word word);
+    void rectWord(Word word, int y, Uint32 color);
 
 };

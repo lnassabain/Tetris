@@ -289,20 +289,7 @@ void SceneManager::drawEraseLine(int line, int scene_id)
     drawBg( y_offset, 1 , 1); //une ligne de bg en haut de l'écran
 }
 
-//////////////// STATS DISPLAY ////////////////
-
-void SceneManager::displayWord(int x, int y, Word word)
-{
-    for (int i = 0 ; i < word.size() ; i++)
-    {
-        if (word[i] != -1)
-        {
-            window_->draw(*sprites_[S_LETTER + word[i] - 1], x, y);
-        }
-        x += sprites_[S_LETTER]->width();
-    }
-}
-
+//////////////// GAME DISPLAY ////////////////
 
 void SceneManager::displayMenu(int mode)
 {
@@ -359,24 +346,36 @@ void SceneManager::display_2p()
     display_1p();
 
     // Affichage écriture CPU :
-    Word cpu = { 3, 16, 21 };
-
-    int w = sprites_[S_LETTER]->width() * cpu.size() + 10;
-    int h = sprites_[S_LETTER]->height() + 10;
-    int x = 235 / 2 - w / 2 + 320;
     int y = 295;
-    const SDL_Rect fond = { x, y, w, h };
+    int h = sprites_[S_LETTER]->height() + 10;
     SDL_Surface* win_surf = window_->getSurface()->getSurface();
-    SDL_FillRect(win_surf, &fond,
-                 SDL_MapRGB(win_surf->format, 0, 255, 251));
 
-    displayWord(x+5, y+5, cpu);
+    Word cpu = { 3, 16, 21 };
+    rectWord(cpu, y, SDL_MapRGB(win_surf->format, 0, 255, 251));
 
     // Affiche sprite score :
     window_->draw(*sprites_[S_SCORE], 235/2 - sprites_[S_SCORE]->width()/2 + 320,
                   y + h + 5);
-
 }
+
+
+void SceneManager::displayGO()
+{
+    Word game = { 7, 1, 13, 5 };
+    Word over = { 15, 22, 5, 18 };
+    int y = window_->height()/2 - sprites_[S_LETTER]->height()/2;
+    rectWord(game, y, SDL_MapRGB(window_->getSurface()->getSurface()->format, 255, 0, 0));
+    rectWord(over, y + sprites_[S_LETTER]->height(),
+             SDL_MapRGB(window_->getSurface()->getSurface()->format, 255, 0, 0));
+
+    window_->update();
+    SDL_Delay(5000);
+}
+
+
+
+//////////////// STATS DISPLAY ////////////////
+
 
 void SceneManager::displayFigure(int figure, int x, int y)
 {
@@ -413,18 +412,12 @@ void SceneManager::displayFigure(int figure, int x, int y)
 void SceneManager::displayNext(Graphics::GraphicsObject* next)
 {
     // Affichage écriture :
-    Word next_w = { 14, 5, 24, 20 };
-
-    int w = sprites_[S_LETTER]->width() * next_w.size() + 10;
-    int h = sprites_[S_LETTER]->height() + 10;
-    int x = 235 / 2 - w / 2 + 320;
     int y = 500;
-    const SDL_Rect fond = { x, y, w, h };
+    int h = sprites_[S_LETTER]->height() + 10;
     SDL_Surface* win_surf = window_->getSurface()->getSurface();
-    SDL_FillRect(win_surf, &fond,
-                 SDL_MapRGB(win_surf->format, 0, 255, 251));
 
-    displayWord(x+5, y+5, next_w);
+    Word next_w = { 14, 5, 24, 20 };
+    rectWord(next_w, y, SDL_MapRGB(win_surf->format, 0, 255, 251));
 
     // Affichage piece :
     const int colorID = next->getColor();
@@ -450,4 +443,30 @@ void SceneManager::displayNext(Graphics::GraphicsObject* next)
 void SceneManager::update()
 {
     window_->update();
+}
+
+void SceneManager::displayWord(int x, int y, Word word)
+{
+    for (int i = 0 ; i < word.size() ; i++)
+    {
+        if (word[i] != -1)
+        {
+            window_->draw(*sprites_[S_LETTER + word[i] - 1], x, y);
+        }
+        x += sprites_[S_LETTER]->width();
+    }
+}
+
+//x est centré dans le rectangle noir
+void SceneManager::rectWord(Word word, int y, Uint32 color)
+{
+    int w = sprites_[S_LETTER]->width() * word.size() + 10;
+    int h = sprites_[S_LETTER]->height() + 10;
+    int x = 235 / 2 - w / 2 + 320;
+    SDL_Surface* win_surf = window_->getSurface()->getSurface();
+
+    const SDL_Rect fond = { x, y, w, h };
+    SDL_FillRect(win_surf, &fond, color);
+
+    displayWord(x+5, y+5, word);
 }
