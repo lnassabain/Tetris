@@ -368,6 +368,22 @@ void SceneManager::displayFigure(int figure, int x, int y)
 }
 
 
+void SceneManager::displayNext(Graphics::GraphicsObject* next)
+{
+    const int colorID = next->getColor();
+	Sprite* next_sprite = sprites_[ colorID ];
+    int x_offset = 400;
+    int y_offset = 500;
+
+    for ( const auto& p : next->tiles_[ next->getRotation() ] ) //tous les carrés
+    {
+        window_->draw( *next_sprite, x_offset + p.first * grid_tileSize_,
+                        y_offset + p.second * grid_tileSize_ );
+    }
+
+}
+
+
 //////////////// UTILS ////////////////
 
 void SceneManager::update()

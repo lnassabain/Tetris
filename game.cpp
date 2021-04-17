@@ -475,7 +475,7 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 			exit(1);
 			break;
 	}
-	
+
 
 	return;
 }
@@ -484,11 +484,18 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 void Game::loop(bool multiplayer)
 {
 	bool quit = false;
+	// Init object
+	Graphics::GraphicsObject* next = shapeRand();
+
 	while ( !quit )
 	{
-		//On cree l'objet courant
-		Graphics::GraphicsObject* co;
-		co = shapeRand();
+		// Objet courant
+		//std::cout << "next debut x " << next->getPositionX() << " y " << next->getPositionY() << std::endl;
+
+		Graphics::GraphicsObject* co = next;
+		//std::cout << "co x " << co->getPositionX() << " y " << co->getPositionY() << std::endl;
+		co->setPositionY(0);
+
 
 		if(collisionCreation(co))
 		{
@@ -497,7 +504,10 @@ void Game::loop(bool multiplayer)
 			exit(0);
 		}
 
-
+		// Prochain objet
+		next = shapeRand();
+	//	std::cout << "next x " << next->getPositionX() << " y " << next->getPositionY() << std::endl;
+		//std::cout << "next " << next->getColor() << std::endl;
 
 		bool toucheFond = false;
 		bool check_key = false; //un bouton a été appuyé si true
@@ -505,8 +515,8 @@ void Game::loop(bool multiplayer)
 		int currentTime;
 		int y;
 
-		draw(co, 1);
-		draw(co, 2);
+		draw(co, next, 1);
+		draw(co, next, 2);
 
 		SDL_Delay(500);
 
@@ -561,8 +571,8 @@ void Game::loop(bool multiplayer)
 			calcul_score(nb_line);
 			levelUp();
 
-			draw(co, 1);
-			draw(co, 2);
+			draw(co, next, 1);
+			draw(co, next, 2);
 		}
 
 	}
@@ -593,7 +603,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 
 
 
-void Game::draw(Graphics::GraphicsObject* obj, int scene_id)
+void Game::draw(Graphics::GraphicsObject* obj, Graphics::GraphicsObject* next, int scene_id)
 {
 	manager_->drawBg(0, manager_->get_nbRows(), scene_id);
 	drawShadow(obj, scene_id);
@@ -615,6 +625,7 @@ void Game::draw(Graphics::GraphicsObject* obj, int scene_id)
 	manager_->display_1p();
 	manager_->displayFigure(score, 430, 70);
 	manager_->displayFigure(level, 430, 205);
+	manager_->displayNext(next);
 
 
 	manager_->update();
