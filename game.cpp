@@ -486,15 +486,16 @@ void Game::loop(bool multiplayer)
 	bool quit = false;
 	// Init object
 	Graphics::GraphicsObject* next = shapeRand();
+//	std::cout << "next adr dehors " << next << std::endl;
 
 	while ( !quit )
 	{
 		// Objet courant
 		//std::cout << "next debut x " << next->getPositionX() << " y " << next->getPositionY() << std::endl;
 
-		Graphics::GraphicsObject* co = next;
-		//std::cout << "co x " << co->getPositionX() << " y " << co->getPositionY() << std::endl;
-		co->setPositionY(0);
+		Graphics::GraphicsObject obj = *next; //copie
+		Graphics::GraphicsObject * co = &obj;
+	//	std::cout << "co adr " << co << std::endl;
 
 
 		if(collisionCreation(co))
@@ -505,9 +506,9 @@ void Game::loop(bool multiplayer)
 		}
 
 		// Prochain objet
+		//SDL_Delay(13);
 		next = shapeRand();
-	//	std::cout << "next x " << next->getPositionX() << " y " << next->getPositionY() << std::endl;
-		//std::cout << "next " << next->getColor() << std::endl;
+	//	std::cout << "next adr " << next << std::endl;
 
 		bool toucheFond = false;
 		bool check_key = false; //un bouton a été appuyé si true
