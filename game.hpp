@@ -39,6 +39,9 @@ protected:
 	/*Renvoie l'objet qu'on a deplacé(ou pas)*/
 	Graphics::GraphicsObject* keyboard( const std::uint8_t* keys, Graphics::GraphicsObject* obj );
 
+	//fonction qui gere toute seule les deplacements d'une piece
+	Graphics::GraphicsObject* cpuMove(Graphics::GraphicsObject* obj);
+
 private:
 	std::vector< std::vector< int > > presenceMap_;
 	std::vector< std::vector< int > > presenceMapB_; //presence map bis pour la deuxieme scene

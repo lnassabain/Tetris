@@ -249,11 +249,58 @@ Graphics::GraphicsObject* Game::keyboard( const std::uint8_t* keys, Graphics::Gr
 	return obj;
 }
 
+Graphics::GraphicsObject* Game::cpuMove(Graphics::GraphicsObject* obj)
+{
+	int x = obj->getPositionX();
+	int y = obj->getPositionY();
+	srand(time(NULL));
+	int m = rand() % 6;
+
+	switch(m)
+	{
+		case 0: //deplacement à gauche
+			if (!collisionLeft(obj))
+			{
+				obj -> setPositionX(x-manager_->get_tileSize());
+			}
+			break;
+		case 1: //deplacement à droite
+			if (!collisionRight(obj))
+			{
+				obj -> setPositionX(x+manager_->get_tileSize());
+			}
+			break;
+		case 2: //deplacement vers le bas
+			if (!collisionDown(obj))
+			{
+				obj -> setPositionY(y+manager_->get_tileSize());
+			}
+			break;
+		case 3: //rotation
+			if (!collisionRotation(obj))
+			{
+				obj -> rotate();
+			}
+			break;
+		case 4: //on ne fait rien
+			break;
+		case 5: //on drop la piece
+			while (!collisionDown(obj))
+			{
+				obj->setPositionY(obj->getPositionY()+manager_->get_tileSize());
+			}
+			break;
+	}
+
+	return obj;
+}
+
 Graphics::GraphicsObject* Game::shapeRand(){
 	srand(time(NULL));
 	int s = rand() % 7; //va de 0 à 6
 	Graphics::GraphicsObject* obj;
-	switch(s){
+	switch(s)
+	{
 		case 0:
 			obj = Graphics::ShapeI::create();
 			break;
