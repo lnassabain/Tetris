@@ -26,7 +26,7 @@ public:
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
 
 	void addToPresMap(Graphics::GraphicsObject* obj, int scene_id); //Noie un objet dans la presenceMap
-	int eraseLine();
+	int eraseLine(int scene_id);
 
 	bool collisionCreation(Graphics::GraphicsObject* obj); //teste si on peut creer un nouvel objet courant sans qu'il y ait de collision, sinon game over
 	bool collisionLeft(Graphics::GraphicsObject* obj); //verifie si deplacement gauche possible
@@ -52,10 +52,11 @@ private:
 
 
 	int score;
+	int scoreB; //score de l'ordi
 	int level;
 	int tot_line;
 	double speed;
-	void calcul_score(int nb_line);
+	void calcul_score(int nb_line, int scene_id);
 	void levelUp();
 
 };

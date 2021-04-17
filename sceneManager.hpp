@@ -47,7 +47,7 @@ public:
 	void drawBg(int y, int nbLines, int scene_id);
 	void drawPresMap(std::vector< std::vector< int > > presenceMap_, int scene_id);
     void drawShadow(Graphics::GraphicsObject& shadow, int scene_id);
-    void drawEraseLine(int line);
+    void drawEraseLine(int line, int scene_id);
 
     void displayWord(int x, int y, Word word);
     void displayMenu(int mode);

@@ -14,6 +14,7 @@ Game::Game()
 ,	presenceMap_()
 ,	presenceMapB_()
 ,	score( 0 )
+,	scoreB( 0 )
 ,	level( 1 )
 ,	tot_line( 0 )
 , 	speed( 1000 )
@@ -333,16 +334,31 @@ Graphics::GraphicsObject* Game::shapeRand(){
  * Check if there are lines to remove and do it. Increases the player score.
  * @return number of erased lines, to calculate the new score
  */
-int Game::eraseLine()
+int Game::eraseLine(int scene_id)
 {
+	std::vector< std::vector< int > > presMap;
 	int nb_complete = 0;
 	std::stack <int> idx_erasedL; //pour la maj de presenceMap_
 	idx_erasedL.push(-1); //pour aller jusqu'en haut dans la maj de presenceMap_
 
-	// Parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
-	for (size_t i = 0 ; i < presenceMap_.size()-1 ; i++)
+	switch (scene_id)
 	{
-		std::vector< int > line = presenceMap_[i];
+		case 1:
+			presMap = presenceMap_;
+			break;
+		case 2:
+			presMap = presenceMapB_;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
+
+	// Parcourt toutes les lignes de presenceMap_ sauf la derniere qui est le sol
+	for (size_t i = 0 ; i < presMap.size()-1 ; i++)
+	{
+		std::vector< int > line = presMap[i];
 		size_t j = 0;
 
 		// Cherche jusqu'où la ligne est remplie
@@ -354,7 +370,7 @@ int Game::eraseLine()
 			nb_complete++;
 			idx_erasedL.push(i); // on empile l'indice de la ligne
 
-			manager_->drawEraseLine(i);
+			manager_->drawEraseLine(i, scene_id);
 		}
 	}
 	if (nb_complete != 0)
@@ -372,38 +388,68 @@ int Game::eraseLine()
 			// on divise presenceMap_ en blocs de lignes séparés par les lignes enlevées
 			for (size_t l = begin ; l > end ; l--)
 			{
-				presenceMap_[ l ] = presenceMap_[ l - x ];
+				presMap[ l ] = presMap[ l - x ];
 			}
 			begin = end;
 		}
 
 		// Les lignes vides en haut de l'écran dues à la disparition de lignes en dessous:
 		for (int i = 0 ; i < nb_complete ; i ++)
-			presenceMap_[i] = std::vector<int>( manager_->get_nbCol(), 0 );
+			presMap[i] = std::vector<int>( manager_->get_nbCol(), 0 );
 	}
+
+	switch(scene_id)
+	{
+		case 1:
+			presenceMap_ = presMap;
+			break;
+		case 2:
+			presenceMapB_ = presMap;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
+
 	return nb_complete;
 }
 
-void Game::calcul_score(int nb_line)
+void Game::calcul_score(int nb_line, int scene_id)
 {
+	int sc_tmp; 
+	switch(scene_id)
+	{
+		case 1:
+			sc_tmp = score;
+			break;
+		case 2:
+			sc_tmp = scoreB;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
+
 	switch (nb_line)
 	{
 		case 0 :
 			return;
 		case 1 :
-			score += 40 * level;
+			sc_tmp += 40 * level;
 			tot_line += 1;
 			break;
 		case 2 :
-			score += 100 * level;
+			sc_tmp += 100 * level;
 			tot_line += 3;
 			break;
 		case 3 :
-			score += 300 * level;
+			sc_tmp += 300 * level;
 			tot_line += 5;
 			break;
 		case 4 :
-			score += 1200 * level;
+			sc_tmp += 1200 * level;
 			tot_line += 8;
 			std::cout << "TETRIS !" << std::endl;
 			break;
@@ -411,7 +457,21 @@ void Game::calcul_score(int nb_line)
 			std::cerr << "default case in switch(nb_line) in calcul_score" << std::endl;
 			exit(1);
 	}
-	std::cout << "New score : " << score << std::endl;
+	switch (scene_id)
+	{
+		case 1:
+			score = sc_tmp;
+			std::cout << "New score : " << score << std::endl;
+			break;
+		case 2:
+			scoreB = sc_tmp;
+			std::cout << "New CPU score : " << scoreB << std::endl;
+			break;
+		default:
+			std::cerr << "Numero de scene non valide" << std::endl;
+			exit(1);
+			break;
+	}
 }
 
 void Game::levelUp()
@@ -568,8 +628,10 @@ void Game::loop(bool multiplayer)
 				lastTime = currentTime;
 			}
 
-			int nb_line = eraseLine();
-			calcul_score(nb_line);
+			int nb_line = eraseLine(1);
+			int nb_lineB = eraseLine(2);
+			calcul_score(nb_line, 1);
+			calcul_score(nb_line, 2);
 			levelUp();
 
 			draw(co, next, 1);
@@ -577,7 +639,7 @@ void Game::loop(bool multiplayer)
 		}
 
 	}
-	SDL_Quit();
+	return;
 }
 
 
@@ -671,12 +733,14 @@ void Game::menu()
 					{
 						initialize(false);
 						loop(false);
+						SDL_Quit();
 						return;
 					}
 					else if (mode == 1)
 					{
 						initialize(true);
 						loop(true);
+						SDL_Quit();
 						return;
 					}
 					else

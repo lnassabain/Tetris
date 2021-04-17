@@ -262,14 +262,31 @@ void SceneManager::drawShadow(Graphics::GraphicsObject& shadow, int scene_id)
 /* on prend la surface de tout ce qu'il y a au dessus de cette ligne
 et on la copie une ligne plus bas
 + on reaffiche le fond en haut */
-void SceneManager::drawEraseLine(int line)
+void SceneManager::drawEraseLine(int line, int scene_id)
 {
-    Sprite above ( window_->getSurface(), X_OFFSET, Y_OFFSET,
+    int x_offset, y_offset;
+    switch (scene_id)
+    {
+        case 1:
+            x_offset = X_OFFSET;
+            y_offset = Y_OFFSET;
+            break;
+        case 2:
+            x_offset = X2_OFFSET;
+            y_offset = Y2_OFFSET;
+            break;
+        default:
+            std::cerr << "Numero de grid non valide" << std::endl;
+            exit(1);
+            break;
+    }
+
+    Sprite above ( window_->getSurface(), x_offset, y_offset,
                    grid_nbColumns_ * grid_tileSize_,
                    grid_tileSize_ * line);
     // On décale cette sprite d'une ligne vers le bas : y = grid_tileSize_
-    window_->draw( above, X_OFFSET, grid_tileSize_ );
-    drawBg( Y_OFFSET, 1 , 1); //une ligne de bg en haut de l'écran
+    window_->draw( above, x_offset, grid_tileSize_ );
+    drawBg( y_offset, 1 , 1); //une ligne de bg en haut de l'écran
 }
 
 //////////////// STATS DISPLAY ////////////////
