@@ -47,7 +47,7 @@ private:
 	std::vector< std::vector< int > > presenceMapB_; //presence map bis pour la deuxieme scene
 	void drawMap();
 	SceneManager* manager_;
-	void drawShadow(Graphics::GraphicsObject* obj);
+	void drawShadow(Graphics::GraphicsObject* obj, int scene_id);
 	void draw(Graphics::GraphicsObject* obj, int scene_id);
 
 

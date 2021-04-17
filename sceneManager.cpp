@@ -231,14 +231,31 @@ void SceneManager::drawBg(int y, int nbLines, int scene_id)
 }
 
 
-void SceneManager::drawShadow(Graphics::GraphicsObject& shadow)
+void SceneManager::drawShadow(Graphics::GraphicsObject& shadow, int scene_id)
 {
     Sprite* obj_sprite = sprites_[ S_SHADOW ];
     int x = shadow.getPositionX();
     int y = shadow.getPositionY();
+    int x_offset, y_offset;
+    switch(scene_id)
+    {
+        case 1:
+            x_offset = X_OFFSET;
+            y_offset = Y_OFFSET;
+            break;
+        case 2:
+            x_offset = X2_OFFSET;
+            y_offset = Y2_OFFSET;
+            break;
+        default:
+            std::cerr << "Numero de grid non valide" << std::endl;
+            exit(1);
+            break;
+    }
+
     for ( const auto& p : shadow.tiles_[ shadow.getRotation() ] ) //tous les carrés
-        window_->draw( *obj_sprite, X_OFFSET + x + p.first * grid_tileSize_,
-                        Y_OFFSET + y + p.second * grid_tileSize_ );
+        window_->draw( *obj_sprite, x_offset + x + p.first * grid_tileSize_,
+                        y_offset + y + p.second * grid_tileSize_ );
 }
 
 

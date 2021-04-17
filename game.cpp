@@ -573,7 +573,7 @@ void Game::loop(bool multiplayer)
 /**
  * Draws the shadow of the current piece on the floor
  */
-void Game::drawShadow(Graphics::GraphicsObject* obj)
+void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 {
 	// On cherche où serait la pièce au sol ; code de SPACE
 	int x = obj->getPositionX();
@@ -588,7 +588,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj)
 		shadow.setPositionY(y_new);
 	}
 
-	manager_->drawShadow(shadow);
+	manager_->drawShadow(shadow, scene_id);
 }
 
 
@@ -596,7 +596,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj)
 void Game::draw(Graphics::GraphicsObject* obj, int scene_id)
 {
 	manager_->drawBg(0, manager_->get_nbRows(), scene_id);
-	drawShadow(obj);
+	drawShadow(obj, scene_id);
 	manager_->drawShape(obj, scene_id);
 	switch (scene_id)
 	{
