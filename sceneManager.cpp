@@ -55,13 +55,6 @@ SceneManager::SceneManager(bool multiplayer)
     sprites_.emplace_back( new Sprite( figure_surf, 290, 0, 34, 60 ) );
     sprites_.emplace_back( new Sprite( figure_surf, 328, 0, 34, 60 ) );
 
-    // for (int i = 11 ; i < 22 ; i++ )
-    // {
-    //     window_->draw(*sprites_[i], ((i-S_FIG)*34)%320, 0);
-    //     window_->update();
-    //
-    //     SDL_Delay(500);
-    // }
 
     // Icon
     Surface* icon_surf = new Surface("./tetris-logo.bmp");
@@ -81,16 +74,6 @@ SceneManager::SceneManager(bool multiplayer)
         }
     }
     std::cout << sprites_.size() << std::endl;
-
-    // Results :
-    Surface* res_surf = new Surface ("./winLoseDraw.bmp");
-    SDL_SetColorKey( res_surf->getSurface(), true,
-                     SDL_MapRGB(res_surf->getSurface()->format, 255, 255, 255));
-    for (int y = 0 ; y < 3*101 ; y += 101)
-    {
-        sprites_.emplace_back( new Sprite( res_surf, 0, y, 235, 101 ) );
-    }
-
 
 }
 SceneManager::~SceneManager()
