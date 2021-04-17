@@ -387,17 +387,36 @@ void SceneManager::displayFigure(int figure, int x, int y)
 
 void SceneManager::displayNext(Graphics::GraphicsObject* next)
 {
+    // Affichage écriture :
+    Word next_w = { 14, 5, 24, 20 };
+
+    int w = sprites_[S_LETTER]->width() * next_w.size() + 10;
+    int h = sprites_[S_LETTER]->height() + 10;
+    int x = 235 / 2 - w / 2 + 320;
+    int y = 500;
+    const SDL_Rect fond = { x, y, w, h };
+    SDL_Surface* win_surf = window_->getSurface()->getSurface();
+    SDL_FillRect(win_surf, &fond,
+                 SDL_MapRGB(win_surf->format, 0, 255, 251));
+
+    displayWord(x+5, y+5, next_w);
+
+    // Affichage piece
     const int colorID = next->getColor();
 	Sprite* next_sprite = sprites_[ colorID ];
-    int x_offset = 400;
-    int y_offset = 500;
+    int y_offset =  y + h + 10 ;
+
+    int x_offset = 390;
+    if (next->getColor() == S_CYAN) // le I
+        x_offset = 375;
+    else if (next->getColor() == S_JAUNE) // le carré
+        x_offset = 405;
 
     for ( const auto& p : next->tiles_[ next->getRotation() ] ) //tous les carrés
     {
         window_->draw( *next_sprite, x_offset + p.first * grid_tileSize_,
                         y_offset + p.second * grid_tileSize_ );
     }
-
 }
 
 
