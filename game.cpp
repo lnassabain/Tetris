@@ -608,14 +608,17 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 	int x = obj -> getPositionX();
 	int y = obj -> getPositionY();
 	int colID = obj->getColor();
+	int x_offset, y_offset;
 
 	switch(scene_id)
 	{
 		case 1:
+			x_offset = X_OFFSET;
+			y_offset = Y_OFFSET;
 			for (const auto& p : obj->tiles_[ obj->getRotation() ] )
 			{
-				carre_x = x + p.first*manager_->get_tileSize();
-				carre_y = y + p.second*manager_->get_tileSize();
+				carre_x = x - x_offset + p.first*manager_->get_tileSize();
+				carre_y = y - y_offset + p.second*manager_->get_tileSize();
 
 				placeXinPM = carre_x / manager_->get_tileSize();
 				placeYinPM = carre_y / manager_->get_tileSize();
@@ -624,10 +627,12 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 			}
 			break;
 		case 2:
+			x_offset = X2_OFFSET;
+			y_offset = Y2_OFFSET;
 			for (const auto& p : obj->tiles_[ obj->getRotation() ] )
 			{
-				carre_x = x + p.first*manager_->get_tileSize();
-				carre_y = y + p.second*manager_->get_tileSize();
+				carre_x = x - x_offset + p.first*manager_->get_tileSize();
+				carre_y = y - y_offset + p.second*manager_->get_tileSize();
 
 				placeXinPM = carre_x / manager_->get_tileSize();
 				placeYinPM = carre_y / manager_->get_tileSize();
@@ -649,101 +654,125 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 void Game::loop(bool multiplayer)
 {
 	bool quit = false;
-	// Init object
+	bool toucheFond = true;
+	bool toucheFondB = true;
+	int lastTime=0;
+	int currentTime;
+	Graphics::GraphicsObject* co;
+	Graphics::GraphicsObject* coB;
 	Graphics::GraphicsObject* next = shapeRand();
-//	std::cout << "next adr dehors " << next << std::endl;
 
 	while ( !quit )
 	{
-		// Objet courant
-		//std::cout << "next debut x " << next->getPositionX() << " y " << next->getPositionY() << std::endl;
 
-		Graphics::GraphicsObject obj = *next; //copie
-		Graphics::GraphicsObject * co = &obj;
-	//	std::cout << "co adr " << co << std::endl;
-
-
-		if(collisionCreation(co,1))
-		{
-			std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
-					  << std::endl;
-			manager_->displayGO();
-			exit(0);
-		}
-
-		// Prochain objet
-		//SDL_Delay(13);
-		next = shapeRand();
-	//	std::cout << "next adr " << next << std::endl;
-
-		bool toucheFond = false;
 		bool check_key = false; //un bouton a été appuyé si true
-		int lastTime=0;
-		int currentTime;
 		int y;
 
-		draw(co, next, 1, multiplayer);
-		draw(co, next, 2, multiplayer);
-
-		SDL_Delay(500);
-
-		while (!quit && !toucheFond)
+		if (toucheFond==true)
 		{
-
-			// Event management
-			SDL_Event event;
-			while ( !quit && SDL_PollEvent( &event ) )
+			co = next;
+			if(collisionCreation(co,1))
 			{
-				switch ( event.type )
-				{
-					case SDL_QUIT:
-						quit = true;
-						break;
-
-					case SDL_KEYDOWN:
-						check_key= true;
-						break;
-
-				}
-			}
-			//keyboard management
-			if (check_key==true)
-			{
-				const Uint8* state = SDL_GetKeyboardState(NULL);
-				co = keyboard(state, co);
-				quit |= state[ SDL_SCANCODE_ESCAPE ];
-				check_key = false;
+				std::cout << "GAME OVER. SCORE : " << score << " | LEVEL : " << level
+					  << std::endl;
+				manager_->displayGO();
+				exit(0);
 			}
 
-			currentTime = SDL_GetTicks();
-			if (currentTime > lastTime + speed)
+			next = shapeRand();
+			draw(co, next, 1, multiplayer);
+			toucheFond = false;
+			SDL_Delay(400);
+		}
+		
+		if(multiplayer && toucheFondB==true)
+		{
+			//On cree l'objet pour la deuxieme fenetre
+			coB = shapeRand();
+			coB -> setPositionX(coB->getPositionX() + 555);
+			if(collisionCreation(coB,2))
 			{
-				if (!collisionDown(co,1)) //si on peut se deplacer vers le bas
+				std::cout << "GAME OVER. YOUR SCORE: " << score << std::endl;
+				std::cout << "GAME OVER. SCORE CPU: " << scoreB << std::endl;
+				exit(0);
+			}
+			draw(coB, next, 2, multiplayer);
+			toucheFondB = false;
+		}
+
+		// Event management
+		SDL_Event event;
+		while ( !quit && SDL_PollEvent( &event ) )
+		{
+			switch ( event.type )
+			{
+				case SDL_QUIT:
+					quit = true;
+					break;
+
+				case SDL_KEYDOWN:
+					check_key= true;
+					break;
+
+			}
+		}
+		//keyboard management
+		if (check_key==true)
+		{
+			const Uint8* state = SDL_GetKeyboardState(NULL);
+			co = keyboard(state, co);
+			quit |= state[ SDL_SCANCODE_ESCAPE ];
+			check_key = false;
+		}
+
+		if(multiplayer)
+		{
+			coB = cpuMove(coB);
+		}
+
+		currentTime = SDL_GetTicks();
+		if (currentTime > lastTime + speed)
+		{
+			if (multiplayer)
+			{
+				if (!collisionDown(coB, 2))
 				{
-					y = co -> getPositionY();
-					//on se deplace vers le bas
-					co -> setPositionY(y + manager_->get_tileSize());
+					y = coB -> getPositionY();
+					coB->setPositionY(y + manager_->get_tileSize());
 				}
 				else
 				{
-					toucheFond = true;
-					// on l'ajoute à la matrice de presence
-					addToPresMap(co,1);
-					addToPresMap(co,2);
+					toucheFondB = true;
+					addToPresMap(coB,2);
 				}
-				lastTime = currentTime;
 			}
-
-			int nb_line = eraseLine(1);
-			int nb_lineB = eraseLine(2);
-			calcul_score(nb_line, 1);
-			calcul_score(nb_line, 2);
-			levelUp(multiplayer);
-
-			draw(co, next, 1, multiplayer);
-			draw(co, next, 2, multiplayer);
+			if (!collisionDown(co,1)) //si on peut se deplacer vers le bas
+			{
+				y = co -> getPositionY();
+				//on se deplace vers le bas
+				co -> setPositionY(y + manager_->get_tileSize());
+			}
+			else
+			{
+				toucheFond = true;
+				// on l'ajoute à la matrice de presence
+				addToPresMap(co,1);
+			}
+			lastTime = currentTime;
 		}
+		
+		int nb_line = eraseLine(1);
+		calcul_score(nb_line, 1);
+		levelUp(multiplayer);
+		draw(co, next, 1, multiplayer);
+			
 
+		if(multiplayer)
+		{
+			int nb_lineB = eraseLine(2);
+			calcul_score(nb_lineB, 2);
+			draw(coB, next, 2, multiplayer);
+		}
 	}
 	return;
 }
@@ -761,7 +790,7 @@ void Game::drawShadow(Graphics::GraphicsObject* obj, int scene_id)
 	Graphics::GraphicsObject shadow = *obj; //copie
 
 	int y_new = y;
-	while (!collisionDown(&shadow, 1))
+	while (!collisionDown(&shadow, scene_id))
 	{
 		y_new += manager_->get_tileSize();
 		shadow.setPositionY(y_new);
