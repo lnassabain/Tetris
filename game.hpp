@@ -18,9 +18,9 @@ public:
 	Game();
 	virtual ~Game();
 
-	void initialize();
+	void initialize(bool multiplayer);
 	void finalize();
-    void loop();
+    void loop(bool multiplayer);
 	void menu();
 
 	Graphics::GraphicsObject* shapeRand(); //Cree un Graphisc objet de type aléatoire( I, J etc.)
@@ -51,7 +51,6 @@ private:
 	void draw(Graphics::GraphicsObject* obj, int scene_id);
 
 
-	bool multiplayer; //true if multiplayer game, else false
 	int score;
 	int level;
 	int tot_line;

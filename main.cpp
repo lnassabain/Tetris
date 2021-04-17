@@ -13,9 +13,8 @@ int main( int argc, char** argv )
 	// Game management
 	Game* game = new Game();
 	// - initialization
-	game->initialize();
-	//game->menu();
-	game->loop();
+	game->initialize(false);
+	game->menu();
 	// - finalization
 	game->finalize();
 	delete game;

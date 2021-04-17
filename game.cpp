@@ -17,7 +17,6 @@ Game::Game()
 ,	level( 1 )
 ,	tot_line( 0 )
 , 	speed( 1000 )
-,   multiplayer(true)
 {
 }
 
@@ -26,7 +25,7 @@ Game::~Game()
 
 }
 
-void Game::initialize()
+void Game::initialize(bool multiplayer)
 {
 	manager_ = new SceneManager(multiplayer);
     /*Pour modeliser la grille, on cree une matrice booleenne. Lorsque l'objet
@@ -482,7 +481,7 @@ void Game::addToPresMap(Graphics::GraphicsObject* obj, int scene_id)
 }
 
 
-void Game::loop()
+void Game::loop(bool multiplayer)
 {
 	bool quit = false;
 	while ( !quit )
@@ -658,12 +657,15 @@ void Game::menu()
 				{
 					if (mode == 0)
 					{
-						multiplayer = false;
-						loop();
+						initialize(false);
+						loop(false);
+						return;
 					}
 					else if (mode == 1)
 					{
-						multiplayer = true;
+						initialize(true);
+						loop(true);
+						return;
 					}
 					else
 					{
