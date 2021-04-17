@@ -16,6 +16,7 @@
 #define S_FIG 11
 #define S_ICON 21
 #define S_LETTER 22
+#define S_RESULT 48
 
 
 #define X_OFFSET 0

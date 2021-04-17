@@ -80,7 +80,17 @@ SceneManager::SceneManager(bool multiplayer)
             sprites_.emplace_back( new Sprite( letter_surf, x, y, 47, 47 ) );
         }
     }
-    //std::cout << sprites_.size() << std::endl;
+    std::cout << sprites_.size() << std::endl;
+
+    // Results :
+    Surface* res_surf = new Surface ("./winLoseDraw.bmp");
+    SDL_SetColorKey( res_surf->getSurface(), true,
+                     SDL_MapRGB(res_surf->getSurface()->format, 255, 255, 255));
+    for (int y = 0 ; y < 3*101 ; y += 101)
+    {
+        sprites_.emplace_back( new Sprite( res_surf, 0, y, 235, 101 ) );
+    }
+
 
 }
 SceneManager::~SceneManager()
